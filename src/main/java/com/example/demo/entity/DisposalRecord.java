@@ -1,23 +1,32 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
-public class LifecycleEvent {
+public class DisposalRecord {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@ManyToOne
-private Asset asset;
+    @OneToOne
+    private Asset asset;
 
-private String eventType;
-private String eventDescription;
+    private String disposalMethod;
+    private LocalDate disposalDate;
 
-private LocalDateTime eventDate;
+    @ManyToOne
+    private User approvedBy;
 
-@ManyToOne
-private User performedBy;
+    private String notes;
+    private LocalDateTime createdAt;
 
-@PrePersist
-public void prePersist() {
-eventDate = LocalDateTime.now();
-}
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
+
+    // getters & setters
 }
