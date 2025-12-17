@@ -1,12 +1,8 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.DisposalRecord;
-import com.example.demo.entity.Asset;
-import com.example.demo.repository.DisposalRecordRepository;
-import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.service.DisposalRecordService;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 
