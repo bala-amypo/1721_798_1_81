@@ -1,25 +1,36 @@
-package com.example.demo.dto;
+package com.example.demo.controller;
 
-public class RegisterRequest {
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RegisterRequest;
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
+import org.springframework.web.bind.annotation.*;
 
-    private String email;
-    private String password;
-    private String department;
-    private String role;
+import java.util.Map;
 
-    public String getEmail() {
-        return email;
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
     }
 
-    public String getPassword() {
-        return password;
+    @PostMapping("/register")
+    public User register(@RequestBody RegisterRequest req) {
+        return userService.register(
+                req.getEmail(),
+                req.getPassword(),
+                req.getDepartment(),
+                req.getRole()
+        );
     }
 
-    public String getDepartment() {
-        return department;
-    }
-
-    public String getRole() {
-        return role;
+    @PostMapping("/login")
+    public Map<String, String> login(@RequestBody LoginRequest request) {
+        String token = userService.login(request);
+        return Map.of("token", token);
     }
 }
