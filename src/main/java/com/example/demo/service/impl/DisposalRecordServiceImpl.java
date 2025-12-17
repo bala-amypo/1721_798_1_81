@@ -1,7 +1,14 @@
 package com.example.demo.service.impl;
 
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.entity.DisposalRecord;
+import com.example.demo.entity.Asset;
+import com.example.demo.repository.DisposalRecordRepository;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.exception.ResourceNotFoundException;
+
+import java.time.LocalDate;
+
 
 @Service
 public class DisposalRecordServiceImpl implements DisposalRecordService {

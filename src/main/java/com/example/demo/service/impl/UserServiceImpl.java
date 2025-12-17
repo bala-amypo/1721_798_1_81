@@ -1,7 +1,10 @@
 package com.example.demo.service.impl;
 
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 @Service
 public class UserServiceImpl implements UserService {

@@ -1,7 +1,12 @@
 package com.example.demo.service.impl;
 
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.entity.TransferRecord;
+import com.example.demo.entity.Asset;
+import com.example.demo.repository.TransferRecordRepository;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.exception.ResourceNotFoundException;
+
+import java.time.LocalDate;
 
 
 @Service
@@ -15,21 +20,5 @@ public class TransferRecordServiceImpl implements TransferRecordService {
             AssetRepository assetRepo) {
         this.repo = repo;
         this.assetRepo = assetRepo;
-    }
-
-    @Override
-    public TransferRecord createTransfer(Long assetId, TransferRecord record) {
-
-        if (record.getTransferDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Transfer date cannot be future");
-        }
-
-        Asset asset = assetRepo.findById(assetId)
-                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
-
-        asset.setStatus("TRANSFERRED");
-        record.setAsset(asset);
-
-        return repo.save(record);
     }
 }

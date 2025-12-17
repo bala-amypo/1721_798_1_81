@@ -1,4 +1,5 @@
 package com.example.demo.security;
+import com.example.demo.entity.User;
 
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
