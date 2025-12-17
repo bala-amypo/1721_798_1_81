@@ -6,6 +6,7 @@ import com.example.demo.repository.DisposalRecordRepository;
 import com.example.demo.repository.AssetRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.exception.ResourceNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 

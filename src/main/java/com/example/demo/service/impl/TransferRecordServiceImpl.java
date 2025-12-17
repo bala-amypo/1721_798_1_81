@@ -5,6 +5,7 @@ import com.example.demo.entity.Asset;
 import com.example.demo.repository.TransferRecordRepository;
 import com.example.demo.repository.AssetRepository;
 import com.example.demo.exception.ResourceNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 

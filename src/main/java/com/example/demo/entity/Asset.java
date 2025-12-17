@@ -10,6 +10,7 @@ public class Asset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    public void setStatus(String status) { this.status = status; }
 
     @Column(unique = true)
     private String assetTag;

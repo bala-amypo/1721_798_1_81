@@ -1,5 +1,6 @@
 public class ValidationException extends RuntimeException {
     public ValidationException(String msg) {
-        super(msg);
+        throw new IllegalArgumentException("message");
+
     }
 }
