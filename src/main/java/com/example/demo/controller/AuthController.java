@@ -5,6 +5,7 @@ import com.example.demo.service.UserService;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.dto.LoginRequest;
+import java.util.*;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,9 @@ public class AuthController {
     @PostMapping("/register")
     public User register(@RequestBody RegisterRequest req) {
         User u = new User();
-        u.setEmail(req.email);
-        u.setDepartment(req.department);
-        u.setPassword(req.password);
+        u.setEmail(req.getEmail());
+        u.setDepartment(req.getDepartment());
+        u.setPassword(req.getPassword());
         return userService.registerUser(u);
     }
 
