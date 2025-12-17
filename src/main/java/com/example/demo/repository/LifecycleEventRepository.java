@@ -1,0 +1,1 @@
+public interface LifecycleEventRepository extends JpaRepository<LifecycleEvent, Long> {}
