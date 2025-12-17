@@ -1,14 +1,8 @@
 package com.example.demo.service.impl;
-import com.example.demo.entity.Asset;
-import com.example.demo.entity.TransferRecord;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.AssetRepository;
-import com.example.demo.repository.TransferRecordRepository;
-import com.example.demo.service.TransferRecordService;
 
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
 
 @Service
 public class TransferRecordServiceImpl implements TransferRecordService {

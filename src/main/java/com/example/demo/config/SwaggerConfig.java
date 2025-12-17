@@ -7,14 +7,14 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.SecuritySchemeType;
 
 @OpenAPIDefinition(
-    info = @Info(title = "Demo API", version = "1.0"),
-    security = @SecurityRequirement(name = "bearerAuth")
+        info = @Info(title = "Demo API", version = "1.0"),
+        security = @SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(
-    name = "bearerAuth",
-    type = SecuritySchemeType.HTTP,
-    scheme = "bearer",
-    bearerFormat = "JWT"
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
 )
 public class SwaggerConfig {
 }

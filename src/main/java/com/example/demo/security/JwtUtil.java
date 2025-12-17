@@ -1,7 +1,10 @@
+package com.example.demo.security;
+
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+
 
 @Component
 public class JwtUtil {
