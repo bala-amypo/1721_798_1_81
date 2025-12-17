@@ -1,3 +1,8 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+
 @Entity
 public class TransferRecord {
 
@@ -10,8 +15,11 @@ public class TransferRecord {
 
     private String fromDepartment;
     private String toDepartment;
+
     private LocalDate transferDate;
 
     @ManyToOne
     private User approvedBy;
+
+    // getters and setters
 }

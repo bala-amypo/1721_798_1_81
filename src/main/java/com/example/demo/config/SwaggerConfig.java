@@ -8,10 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(
-                title = "Digital Asset Lifecycle & Audit Trail API",
-                version = "1.0"
-        )
+        info = @Info(title = "Asset API", version = "1.0")
 )
 @SecurityScheme(
         name = "bearerAuth",

@@ -1,3 +1,8 @@
+package com.example.demo.entity;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
 @Entity
 public class LifecycleEvent {
 
@@ -20,4 +25,6 @@ public class LifecycleEvent {
     public void prePersist() {
         eventDate = LocalDateTime.now();
     }
+
+    // getters & setters
 }
