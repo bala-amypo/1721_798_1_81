@@ -19,18 +19,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody RegisterRequest req) {
-        return userService.register(
-                req.getEmail(),
-                req.getPassword(),
-                req.getDepartment(),
-                req.getRole()
-        );
+    public User register(@RequestBody RegisterRequest request) {
+        return userService.registerUser(request);
     }
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody LoginRequest request) {
-        String token = userService.login(request);
-        return Map.of("token", token);
+        return userService.login(request);
     }
 }
