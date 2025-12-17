@@ -30,9 +30,10 @@ public class AuthController {
         return userService.registerUser(u);
     }
 
-    @PostMapping("/login")
-    public String login(@RequestBody LoginRequest req) {
-        User user = userService.findByEmail(req.email);
-        return jwtUtil.generateToken(user);
-    }
+   @PostMapping("/login")
+public Map<String, String> login(@RequestBody LoginRequest req) {
+    String token = userService.login(req);
+    return Map.of("token", token);
+}
+
 }
