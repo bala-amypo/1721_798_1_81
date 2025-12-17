@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,17 +14,36 @@ public class LifecycleEvent {
     private Asset asset;
 
     private String eventType;
-    private String eventDescription;
 
-    private LocalDateTime eventDate;
+    private LocalDateTime eventTime;
 
-    @ManyToOne
-    private User performedBy;
+    // ===== Getters & Setters =====
 
-    @PrePersist
-    public void prePersist() {
-        eventDate = LocalDateTime.now();
+    public Long getId() {
+        return id;
     }
 
-    // getters & setters
+    public Asset getAsset() {
+        return asset;
+    }
+
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public LocalDateTime getEventTime() {
+        return eventTime;
+    }
+
+    public void setEventTime(LocalDateTime eventTime) {
+        this.eventTime = eventTime;
+    }
 }
