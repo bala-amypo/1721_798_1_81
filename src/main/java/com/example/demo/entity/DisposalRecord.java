@@ -1,31 +1,23 @@
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import java.time.*;
-
 @Entity
-@Table(name = "users")
-public class User {
+public class LifecycleEvent {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
 
-    private String fullName;
+@ManyToOne
+private Asset asset;
 
-    @Column(unique = true)
-    private String email;
+private String eventType;
+private String eventDescription;
 
-    private String department;
-    private String role;
-    private String password;
-    private LocalDateTime createdAt;
+private LocalDateTime eventDate;
 
-    @PrePersist
-    public void prePersist() {
-        if (role == null) role = "USER";
-        if (createdAt == null) createdAt = LocalDateTime.now();
-        }
+@ManyToOne
+private User performedBy;
 
-        // getters & setters
+@PrePersist
+public void prePersist() {
+eventDate = LocalDateTime.now();
+}
 }

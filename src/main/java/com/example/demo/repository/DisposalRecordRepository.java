@@ -1,0 +1,1 @@
+public interface DisposalRecordRepository extends JpaRepository<DisposalRecord, Long> {}

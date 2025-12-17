@@ -1,0 +1,1 @@
+public interface TransferRecordRepository extends JpaRepository<TransferRecord, Long> {}

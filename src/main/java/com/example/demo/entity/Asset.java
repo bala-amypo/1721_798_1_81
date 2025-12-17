@@ -3,7 +3,7 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import java.time.*;
 
-@entity
+@Entity
 public class Asset {
 
     @Id
