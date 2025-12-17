@@ -1,40 +1,25 @@
-package com.example.demo.controller;
+package com.example.demo.dto;
 
-import com.example.demo.entity.User;
-import com.example.demo.service.UserService;
-import com.example.demo.security.JwtUtil;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.dto.LoginRequest;
-import java.util.*;
+public class RegisterRequest {
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
+    private String email;
+    private String password;
+    private String department;
+    private String role;
 
-@RestController
-@RequestMapping("/auth")
-public class AuthController {
-
-    private final UserService userService;
-    private final JwtUtil jwtUtil;
-
-    public AuthController(UserService userService, JwtUtil jwtUtil) {
-        this.userService = userService;
-        this.jwtUtil = jwtUtil;
+    public String getEmail() {
+        return email;
     }
 
-    @PostMapping("/register")
-    public User register(@RequestBody RegisterRequest req) {
-        User u = new User();
-        u.setEmail(req.getEmail());
-        u.setDepartment(req.getDepartment());
-        u.setPassword(req.getPassword());
-        return userService.registerUser(u);
+    public String getPassword() {
+        return password;
     }
 
-   @PostMapping("/login")
-public Map<String, String> login(@RequestBody LoginRequest req) {
-    String token = userService.login(req);
-    return Map.of("token", token);
-}
+    public String getDepartment() {
+        return department;
+    }
 
+    public String getRole() {
+        return role;
+    }
 }
