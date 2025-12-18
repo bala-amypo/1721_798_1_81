@@ -16,11 +16,12 @@ public class SwaggerConfig {
 
         Server server = new Server();
         server.setUrl("http://localhost:9001");
-        server.setDescription("Local Server");
+        server.setDescription("Digital Asset Lifecycle Server");
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("Transport API")
+                        .title("Digital Asset Lifecycle API")
+                        .description("API for managing the complete lifecycle of digital assets")
                         .version("1.0"))
                 .servers(List.of(server));
     }
