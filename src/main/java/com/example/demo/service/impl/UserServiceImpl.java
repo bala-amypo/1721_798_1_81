@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(RegisterRequest request) {
+
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -46,11 +47,6 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = jwtUtil.generateToken(user);
-
-        return Map.of(
-                "token", token,
-                "email", user.getEmail(),
-                "role", user.getRole()
-        );
+        return Map.of("token", token);
     }
 }
