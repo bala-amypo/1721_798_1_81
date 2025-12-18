@@ -1,45 +1,40 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Asset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String assetTag;
     private String name;
     private String category;
     private String status;
 
-    // ===== Getters & Setters =====
+    private LocalDate purchaseDate;
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne
+    private User currentHolder;
 
-    public String getName() {
-        return name;
-    }
+    private LocalDateTime createdAt;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        if (this.assetTag == null) {
+            this.assetTag = "AST-" + System.currentTimeMillis();
+        }
     }
 }
