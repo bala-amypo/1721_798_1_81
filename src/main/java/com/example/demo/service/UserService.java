@@ -7,6 +7,8 @@ import com.example.demo.entity.User;
 import java.util.Map;
 
 public interface UserService {
-    User registerUser(RegisterRequest request);
+
+    User register(RegisterRequest request);
+
     Map<String, String> login(LoginRequest request);
 }
