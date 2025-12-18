@@ -1,27 +1,23 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
-import com.example.demo.service.AssetService;
+import com.example.demo.repository.AssetRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.ArrayList;
-
 @Service
-public class AssetServiceImpl implements AssetService {
+@RequiredArgsConstructor
+public class AssetServiceImpl {
 
-    @Override
-    public Asset createAsset(Asset asset) {
-        return asset;
+    private final AssetRepository assetRepository;
+
+    public Asset getAsset(Long id) {
+        return assetRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public List<Asset> getAllAssets() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public Asset getAssetById(Long id) {
-        return null;
+    public Asset updateStatus(Long id, String status) {
+        Asset asset = getAsset(id);
+        asset.setStatus(status);
+        return assetRepository.save(asset);
     }
 }
