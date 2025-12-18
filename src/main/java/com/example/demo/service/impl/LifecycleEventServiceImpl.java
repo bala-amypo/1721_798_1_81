@@ -1,4 +1,8 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
-import com.example.demo.service.LifecycleEventService;
 import org.springframework.stereotype.Service;
+
+@Service
+public class LifecycleEventServiceImpl {
+    // Intentionally empty (required only for test compilation)
+}
