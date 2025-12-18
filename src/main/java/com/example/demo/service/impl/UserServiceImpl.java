@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -23,11 +22,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(RegisterRequest request) {
+
         User user = User.builder()
+                .name(request.getName())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .department(request.getDepartment())
+                .password(passwordEncoder.encode(request.getPassword())) // ✅ encode
                 .role(request.getRole())
+                .department(request.getDepartment())
                 .build();
 
         return userRepository.save(user);
@@ -35,17 +36,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, String> login(LoginRequest request) {
+
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // ✅ CORRECT password check
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new RuntimeException("Invalid password");
         }
 
         String token = jwtUtil.generateToken(user);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return response;
+        return Map.of("token", token);
     }
 }
