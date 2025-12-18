@@ -13,16 +13,13 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-
-        Server server = new Server();
-        server.setUrl("https://9025.408procr.amypo.ai/");
-        server.setDescription("Digital Asset Lifecycle Server");
-
         return new OpenAPI()
                 .info(new Info()
                         .title("Digital Asset Lifecycle API")
-                        .description("API for managing the complete lifecycle of digital assets")
-                        .version("1.0"))
-                .servers(List.of(server));
+                        .version("1.0")
+                        .description("Asset tracking system"))
+                .servers(List.of(
+                        new Server().url("http://localhost:9001")
+                ));
     }
 }
