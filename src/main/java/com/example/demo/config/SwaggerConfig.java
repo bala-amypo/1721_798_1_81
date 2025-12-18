@@ -15,12 +15,12 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
 
         Server server = new Server();
-        server.setUrl("https://9025.408procr.amypo.ai/");
-        server.setDescription("Portal Server");
+        server.setUrl("http://localhost:9001");
+        server.setDescription("Local Server");
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Documentation")
+                        .title("Transport API")
                         .version("1.0"))
                 .servers(List.of(server));
     }
