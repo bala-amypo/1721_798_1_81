@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
@@ -11,19 +12,20 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    // MUST be at least 256-bit key
-    private static final Key SECRET_KEY =
-            Keys.hmacShaKeyFor(
-                    "digital-asset-lifecycle-secret-key-1234567890"
-                            .getBytes()
-            );
+    private static final String SECRET_KEY =
+            "bXktc3VwZXItc2VjcmV0LWtleS1mb3Itand0LTEyMw==";
+
+    private Key getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 }
