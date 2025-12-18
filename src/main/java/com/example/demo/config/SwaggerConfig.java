@@ -15,7 +15,7 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
 
         Server server = new Server();
-        server.setUrl("http://localhost:9001");
+        server.setUrl("https://9025.408procr.amypo.ai/");
         server.setDescription("Digital Asset Lifecycle Server");
 
         return new OpenAPI()
