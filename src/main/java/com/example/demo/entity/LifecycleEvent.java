@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,36 +12,59 @@ public class LifecycleEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String eventType;
+
+    private String description;
+
+    private LocalDateTime eventTime = LocalDateTime.now();
+
     @ManyToOne
+    @JoinColumn(name = "asset_id", nullable = false)
     private Asset asset;
 
-    private String eventType;
-    private String eventDescription;
-    private LocalDateTime eventDate;
-
     @ManyToOne
-    private User performedBy;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public LifecycleEvent() {}
+    // ===== Getters & Setters =====
 
-    public LifecycleEvent(Long id, Asset asset, String eventType,
-                          String eventDescription, LocalDateTime eventDate,
-                          User performedBy) {
-        this.id = id;
-        this.asset = asset;
+    public Long getId() {
+        return id;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
         this.eventType = eventType;
-        this.eventDescription = eventDescription;
-        this.eventDate = eventDate;
-        this.performedBy = performedBy;
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (eventDate == null) eventDate = LocalDateTime.now();
+    public String getDescription() {
+        return description;
     }
 
-    public String getEventType() { return eventType; }
-    public String getEventDescription() { return eventDescription; }
-    public void setAsset(Asset asset) { this.asset = asset; }
-    public void setPerformedBy(User user) { this.performedBy = user; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getEventTime() {
+        return eventTime;
+    }
+
+    public Asset getAsset() {
+        return asset;
+    }
+
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
