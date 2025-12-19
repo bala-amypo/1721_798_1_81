@@ -1,37 +1,30 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class DisposalRecord {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     private Asset asset;
 
-    private String reason;
+    private String disposalMethod;
     private LocalDate disposalDate;
 
     @ManyToOne
     private User approvedBy;
 
-    private String remarks;
+    private String notes;
     private LocalDateTime createdAt;
 
     @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+    void init() {
+        createdAt = LocalDateTime.now();
     }
 }

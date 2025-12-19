@@ -1,31 +1,34 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "assets")
 public class Asset {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
-    private String name;
+    @Column(unique = true)
+    private String assetTag;
+
+    private String assetType;
+    private String model;
+    private LocalDate purchaseDate;
     private String status;
 
-    public Long getId() {
-        return id;
+    @ManyToOne
+    private User currentHolder;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void init() {
+        if (status == null) status = "AVAILABLE";
+        if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    // getters & setters
 }
