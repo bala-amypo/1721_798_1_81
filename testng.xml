@@ -1,11 +1,14 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="DigitalAssetLifecycleSuite">
+<suite name="Digital Asset Lifecycle Test Suite">
+
     <listeners>
         <listener class-name="com.example.demo.TestResultListener"/>
     </listeners>
-    <test name="API Tests">
-        <classes>
-            <class name="com.example.demo.DigitalAssetLifecycleAuditTrailApiTest"/>
-        </classes>
+
+    <test name="All Tests">
+        <packages>
+            <package name="com.example.demo"/>
+        </packages>
     </test>
+
 </suite>
