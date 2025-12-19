@@ -3,17 +3,18 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "assets", uniqueConstraints = @UniqueConstraint(columnNames = "assetTag"))
+@Table(name = "assets")
 public class Asset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String assetTag;
+
     private String assetType;
     private String model;
     private LocalDate purchaseDate;
@@ -23,15 +24,6 @@ public class Asset {
     private User currentHolder;
 
     private LocalDateTime createdAt;
-
-    @OneToMany(mappedBy = "asset")
-    private List<LifecycleEvent> lifecycleEvents;
-
-    @OneToMany(mappedBy = "asset")
-    private List<TransferRecord> transferRecords;
-
-    @OneToOne(mappedBy = "asset")
-    private DisposalRecord disposalRecord;
 
     public Asset() {}
 
@@ -50,20 +42,12 @@ public class Asset {
 
     @PrePersist
     public void prePersist() {
-        if (status == null) {
-            status = "AVAILABLE";
-        }
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
+        if (status == null) status = "AVAILABLE";
+        if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
     public Long getId() { return id; }
-
-public String getStatus() { return status; }
-
-public void setStatus(String status) { this.status = status; }
-
-public void setCurrentHolder(User user) { this.currentHolder = user; }
-
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
+    
