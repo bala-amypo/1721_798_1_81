@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   // ← THIS IS MANDATORY
+@Service
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
@@ -18,24 +18,24 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public Asset createAsset(Asset asset) {
+    public Asset create(Asset asset) {
         return assetRepository.save(asset);
     }
 
     @Override
-    public Asset getAsset(Long id) {
+    public List<Asset> getAll() {
+        return assetRepository.findAll();
+    }
+
+    @Override
+    public Asset getById(Long id) {
         return assetRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
     }
 
     @Override
-    public List<Asset> getAllAssets() {
-        return assetRepository.findAll();
-    }
-
-    @Override
-    public Asset updateStatus(Long assetId, String status) {
-        Asset asset = getAsset(assetId);
+    public Asset updateStatus(Long id, String status) {
+        Asset asset = getById(id);
         asset.setStatus(status);
         return assetRepository.save(asset);
     }

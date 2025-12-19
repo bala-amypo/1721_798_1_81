@@ -1,53 +1,44 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.exception.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.Asset;
+import com.example.demo.entity.TransferRecord;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.repository.TransferRecordRepository;
 import com.example.demo.service.TransferRecordService;
-import java.time.LocalDate;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public class TransferRecordServiceImpl implements TransferRecordService {
 
-    private final TransferRecordRepository repo;
+    private final TransferRecordRepository transferRepo;
     private final AssetRepository assetRepo;
-    private final UserRepository userRepo;
 
-    public TransferRecordServiceImpl(TransferRecordRepository repo,
-                                     AssetRepository assetRepo,
-                                     UserRepository userRepo) {
-        this.repo = repo;
+    public TransferRecordServiceImpl(
+            TransferRecordRepository transferRepo,
+            AssetRepository assetRepo) {
+        this.transferRepo = transferRepo;
         this.assetRepo = assetRepo;
-        this.userRepo = userRepo;
     }
 
-    public TransferRecord createTransfer(Long assetId, TransferRecord record) {
+    @Override
+    public TransferRecord create(Long assetId, TransferRecord record) {
         Asset asset = assetRepo.findById(assetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
-        User approver = userRepo.findById(record.getApprovedBy().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (!"ADMIN".equals(approver.getRole())) {
-            throw new ValidationException("Approver must be ADMIN");
-        }
-        if (record.getFromDepartment().equals(record.getToDepartment())) {
-            throw new ValidationException("Departments must differ");
-        }
-        if (record.getTransferDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("Transfer date cannot be in the future");
-        }
-
         record.setAsset(asset);
-        record.setApprovedBy(approver);
-        return repo.save(record);
+        return transferRepo.save(record);
     }
 
-    public List<TransferRecord> getTransfersForAsset(Long assetId) {
-        return repo.findByAssetId(assetId);
+    @Override
+    public List<TransferRecord> getByAsset(Long assetId) {
+        return transferRepo.findByAssetId(assetId);
     }
 
-    public TransferRecord getTransfer(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Transfer not found"));
+    @Override
+    public TransferRecord getById(Long id) {
+        return transferRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transfer record not found"));
     }
 }
