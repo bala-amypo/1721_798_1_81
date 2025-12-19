@@ -5,10 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "disposal_records")
 public class DisposalRecord {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -23,8 +24,24 @@ public class DisposalRecord {
     private String notes;
     private LocalDateTime createdAt;
 
-    @PrePersist
-    void init() {
-        createdAt = LocalDateTime.now();
+    public DisposalRecord() {}
+
+    public DisposalRecord(Long id, Asset asset, String disposalMethod,
+                          LocalDate disposalDate, User approvedBy,
+                          String notes, LocalDateTime createdAt) {
+        this.id = id;
+        this.asset = asset;
+        this.disposalMethod = disposalMethod;
+        this.disposalDate = disposalDate;
+        this.approvedBy = approvedBy;
+        this.notes = notes;
+        this.createdAt = createdAt;
     }
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+    }
+
+    // getters and setters
 }

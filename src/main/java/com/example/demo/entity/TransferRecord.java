@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "transfer_records")
 public class TransferRecord {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -19,4 +20,19 @@ public class TransferRecord {
 
     @ManyToOne
     private User approvedBy;
+
+    public TransferRecord() {}
+
+    public TransferRecord(Long id, Asset asset, String fromDepartment,
+                          String toDepartment, LocalDate transferDate,
+                          User approvedBy) {
+        this.id = id;
+        this.asset = asset;
+        this.fromDepartment = fromDepartment;
+        this.toDepartment = toDepartment;
+        this.transferDate = transferDate;
+        this.approvedBy = approvedBy;
+    }
+
+    // getters and setters
 }
