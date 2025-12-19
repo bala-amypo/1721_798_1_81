@@ -2,6 +2,17 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Asset;
 
+import java.util.List;
+
 public interface AssetService {
-    Asset updateAssetStatus(Long assetId, String status);
+
+    Asset createAsset(Asset asset);
+
+    List<Asset> getAllAssets();
+
+    Asset getAssetById(Long id);
+
+    Asset updateAsset(Long id, Asset asset);
+
+    void deleteAsset(Long id);
 }

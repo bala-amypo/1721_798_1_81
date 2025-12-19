@@ -5,6 +5,8 @@ import com.example.demo.repository.AssetRepository;
 import com.example.demo.service.AssetService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AssetServiceImpl implements AssetService {
 
@@ -15,10 +17,32 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public Asset updateAssetStatus(Long assetId, String status) {
-        Asset asset = assetRepository.findById(assetId)
-                .orElseThrow(() -> new RuntimeException("Asset not found"));
-        asset.setStatus(status);
+    public Asset createAsset(Asset asset) {
         return assetRepository.save(asset);
+    }
+
+    @Override
+    public List<Asset> getAllAssets() {
+        return assetRepository.findAll();
+    }
+
+    @Override
+    public Asset getAssetById(Long id) {
+        return assetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Asset not found"));
+    }
+
+    @Override
+    public Asset updateAsset(Long id, Asset asset) {
+        Asset existing = getAssetById(id);
+        existing.setName(asset.getName());
+        existing.setStatus(asset.getStatus());
+        existing.setCategory(asset.getCategory());
+        return assetRepository.save(existing);
+    }
+
+    @Override
+    public void deleteAsset(Long id) {
+        assetRepository.deleteById(id);
     }
 }
