@@ -16,9 +16,12 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Digital Asset Lifecycle API")
-                        .version("1.0"))
+                        .version("1.0")
+                        .description("API documentation for Digital Asset Lifecycle system"))
                 .servers(List.of(
-                        new Server().url("https://9025.408procr.amypo.ai")
+                        new Server()
+                                .url("http://localhost:9001")
+                                .description("Local Development Server")
                 ));
     }
 }
