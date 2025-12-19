@@ -1,28 +1,23 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AssetStatusUpdateRequest;
-import com.example.demo.entity.Asset;
-import com.example.demo.service.AssetService;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/assets")
-public class AssetController {
+@RequestMapping("/auth")
+public class AuthController {
 
-    private final AssetService assetService;
+    private final UserService userService;
 
-    public AssetController(AssetService assetService) {
-        this.assetService = assetService;
+    public AuthController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PutMapping("/{assetId}/status")
-    public ResponseEntity<Asset> updateAssetStatus(
-            @PathVariable Long assetId,
-            @RequestBody AssetStatusUpdateRequest request) {
-
-        return ResponseEntity.ok(
-                assetService.updateAssetStatus(assetId, request.getStatus())
-        );
+    @PostMapping("/login")
+    public Map<String, String> login(@RequestBody LoginRequest request) {
+        return userService.login(request);
     }
 }
