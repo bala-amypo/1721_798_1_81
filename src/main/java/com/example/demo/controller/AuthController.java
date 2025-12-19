@@ -21,8 +21,8 @@ public class AssetController {
             @PathVariable Long assetId,
             @RequestBody AssetStatusUpdateRequest request) {
 
-        Asset updatedAsset =
-                assetService.updateAssetStatus(assetId, request.getStatus());
-        return ResponseEntity.ok(updatedAsset);
+        return ResponseEntity.ok(
+                assetService.updateAssetStatus(assetId, request.getStatus())
+        );
     }
 }

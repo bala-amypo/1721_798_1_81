@@ -1,7 +1,31 @@
-package com.example.demo.repository;
+package com.example.demo.entity;
 
-import com.example.demo.entity.Asset;
-import org.springframework.data.jpa.repository.JpaRepository;
+import jakarta.persistence.*;
 
-public interface AssetRepository extends JpaRepository<Asset, Long> {
+@Entity
+@Table(name = "assets")
+public class Asset {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

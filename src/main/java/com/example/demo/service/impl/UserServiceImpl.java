@@ -20,17 +20,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail()))
-            throw new ValidationException("Email already in use");
+public String login(LoginRequest request) {
+    User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (user.getPassword() == null || user.getPassword().length() < 8)
-            throw new ValidationException("Password must be at least 8 characters");
-
-        if (user.getDepartment() == null)
-            throw new ValidationException("Department is required");
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        throw new RuntimeException("Invalid credentials");
     }
+
+    return jwtService.generateToken(user.getEmail());
+}
+
 }
