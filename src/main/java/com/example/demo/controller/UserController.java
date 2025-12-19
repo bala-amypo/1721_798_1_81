@@ -1,4 +1,9 @@
-package com.example.demo.controller;
-
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
+public AuthController(AuthenticationManager authenticationManager,
+                      UserService userService,
+                      JwtUtil jwtUtil,
+                      PasswordEncoder passwordEncoder) {
+    this.authenticationManager = authenticationManager;
+    this.userService = userService;
+    this.jwtUtil = jwtUtil;
+    this.passwordEncoder = passwordEncoder;
+}
