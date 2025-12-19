@@ -1,40 +1,7 @@
-package com.example.demo.entity;
+package com.example.demo.repository;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.example.demo.entity.Asset;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Asset {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String assetTag;
-    private String name;
-    private String category;
-    private String status;
-
-    private LocalDate purchaseDate;
-
-    @ManyToOne
-    private User currentHolder;
-
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        if (this.assetTag == null) {
-            this.assetTag = "AST-" + System.currentTimeMillis();
-        }
-    }
+public interface AssetRepository extends JpaRepository<Asset, Long> {
 }
