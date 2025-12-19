@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "lifecycle_events")
 public class LifecycleEvent {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -20,8 +21,23 @@ public class LifecycleEvent {
     @ManyToOne
     private User performedBy;
 
-    @PrePersist
-    void init() {
-        eventDate = LocalDateTime.now();
+    public LifecycleEvent() {}
+
+    public LifecycleEvent(Long id, Asset asset, String eventType,
+                          String eventDescription, LocalDateTime eventDate,
+                          User performedBy) {
+        this.id = id;
+        this.asset = asset;
+        this.eventType = eventType;
+        this.eventDescription = eventDescription;
+        this.eventDate = eventDate;
+        this.performedBy = performedBy;
     }
+
+    @PrePersist
+    public void prePersist() {
+        if (eventDate == null) eventDate = LocalDateTime.now();
+    }
+
+    // getters and setters
 }
