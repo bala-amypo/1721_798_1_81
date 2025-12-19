@@ -1,25 +1,21 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
-@Service
 public class JwtService {
 
-    private static final String SECRET =
-            "MySuperSecretKeyForJwtSigningMySuperSecretKeyForJwtSigning";
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
-
-    public String generateToken(String email) {
+    public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims)
+                .setSubject(subject)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(key)
                 .compact();
     }

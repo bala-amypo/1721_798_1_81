@@ -41,5 +41,12 @@ public class LifecycleEvent {
         }
     }
 
-    // getters and setters
+    public String getEventType() { return eventType; }
+
+public String getEventDescription() { return eventDescription; }
+
+public void setAsset(Asset asset) { this.asset = asset; }
+
+public void setPerformedBy(User user) { this.performedBy = user; }
+
 }

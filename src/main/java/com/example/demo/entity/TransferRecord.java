@@ -34,5 +34,16 @@ public class TransferRecord {
         this.approvedBy = approvedBy;
     }
 
-    // getters and setters
+    public String getFromDepartment() { return fromDepartment; }
+
+public String getToDepartment() { return toDepartment; }
+
+public LocalDate getTransferDate() { return transferDate; }
+
+public User getApprovedBy() { return approvedBy; }
+
+public void setAsset(Asset asset) { this.asset = asset; }
+
+public void setApprovedBy(User user) { this.approvedBy = user; }
+
 }

@@ -45,5 +45,10 @@ public class DisposalRecord {
         }
     }
 
-    // getters and setters
+    public LocalDate getDisposalDate() { return disposalDate; }
+
+public User getApprovedBy() { return approvedBy; }
+
+public void setAsset(Asset asset) { this.asset = asset; }
+
 }

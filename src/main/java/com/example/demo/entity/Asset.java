@@ -58,5 +58,12 @@ public class Asset {
         }
     }
 
-    // getters and setters
+    public Long getId() { return id; }
+
+public String getStatus() { return status; }
+
+public void setStatus(String status) { this.status = status; }
+
+public void setCurrentHolder(User user) { this.currentHolder = user; }
+
 }
