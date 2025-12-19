@@ -1,56 +1,28 @@
-package com.example.demo.service.impl;
+package com.example.demo.config;
 
-import com.example.demo.entity.User;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.exception.ValidationException;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.List;
+@Configuration
+public class SecurityConfig {
 
-@Service
-public class UserServiceImpl implements UserService {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable());
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    // REQUIRED constructor order
-    public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        return http.build();
     }
 
-    @Override
-    public User registerUser(User user) {
-
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new ValidationException("Email already in use");
-        }
-
-        if (user.getPassword() == null || user.getPassword().length() < 8) {
-            throw new ValidationException("Password must be at least 8 characters");
-        }
-
-        if (user.getDepartment() == null) {
-            throw new ValidationException("Department is required");
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User getUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
