@@ -20,7 +20,7 @@ public class SwaggerConfig {
                         .description("API documentation for Digital Asset Lifecycle system"))
                 .servers(List.of(
                         new Server()
-                                .url("https://9365.408procr.amypo.ai/")
+                                .url("https://9250.pro604cr.amypo.ai/")
                                 .description("Local Development Server")
                 ));
     }
