@@ -52,4 +52,26 @@ public class User {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    // ===== SETTERS REQUIRED BY CONTROLLERS =====
+
+public void setFullName(String fullName) {
+    this.fullName = fullName;
+}
+
+public void setEmail(String email) {
+    this.email = email;
+}
+
+public void setDepartment(String department) {
+    this.department = department;
+}
+
+public void setPassword(String password) {
+    this.password = password;
+}
+
+public void setRole(String role) {
+    this.role = role;
+}
+
 }
