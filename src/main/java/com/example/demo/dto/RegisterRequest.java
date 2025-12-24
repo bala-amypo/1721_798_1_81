@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
 public class RegisterRequest {
-
     private String fullName;
     private String email;
     private String department;
@@ -9,19 +8,15 @@ public class RegisterRequest {
 
     public RegisterRequest() {}
 
-    public String getFullName() {
-        return fullName;
+    public RegisterRequest(String fullName, String email,
+                           String department, String password) {
+        this.fullName = fullName;
+        this.email = email;
+        this.department = department;
+        this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public String getPassword() {
-        return password;
-    }
+    public String getEmail() { return email; }
+    public String getDepartment() { return department; }
+    public String getPassword() { return password; }
 }
