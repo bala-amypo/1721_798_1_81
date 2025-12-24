@@ -47,7 +47,16 @@ public class Asset {
     }
 
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getAssetTag() { return assetTag; }
+    public void setAssetTag(String assetTag) { this.assetTag = assetTag; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public User getCurrentHolder() { return currentHolder; }
+    public void setCurrentHolder(User currentHolder) { this.currentHolder = currentHolder; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }
-    

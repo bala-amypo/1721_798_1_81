@@ -13,19 +13,15 @@ public class User {
 
     private String fullName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
     private String department;
-
     private String role;
-
     private String password;
-
     private LocalDateTime createdAt;
 
-    public User() {
-    }
+    public User() {}
 
     public User(Long id, String fullName, String email, String department,
                 String role, String password, LocalDateTime createdAt) {
@@ -40,71 +36,20 @@ public class User {
 
     @PrePersist
     public void prePersist() {
-        if (this.role == null) {
-            this.role = "USER";
-        }
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
+        if (role == null) role = "USER";
+        if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
-    // -------- GETTERS --------
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getEmail() { return email; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public String getFullName() {
-        return fullName;
-    }
+    public String getDepartment() { return department; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    // -------- SETTERS --------
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }
