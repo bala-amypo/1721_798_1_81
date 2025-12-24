@@ -1,25 +1,48 @@
 package com.example.demo.security;
 
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.security.core.userdetails.*;
-import java.util.Collections;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.*;
 
-public class CustomUserDetailsService implements UserDetailsService {
+public class JwtUtil {
 
-    private final UserRepository userRepository;
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public String generateToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .signWith(key)
+                .compact();
     }
 
-    public UserDetails loadUserByUsername(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.emptyList()
-        );
+    public String generateTokenForUser(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRole());
+        return generateToken(claims, user.getEmail());
+    }
+
+    public String extractUsername(String token) {
+        return parseToken(token).getBody().getSubject();
+    }
+
+    public String extractRole(String token) {
+        return (String) parseToken(token).getBody().get("role");
+    }
+
+    public Long extractUserId(String token) {
+        return ((Number) parseToken(token).getBody().get("userId")).longValue();
+    }
+
+    public boolean isTokenValid(String token, String username) {
+        return extractUsername(token).equals(username);
+    }
+
+    public Jws<Claims> parseToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
     }
 }
