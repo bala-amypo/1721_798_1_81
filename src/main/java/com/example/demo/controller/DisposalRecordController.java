@@ -16,23 +16,19 @@ public class DisposalRecordController {
         this.disposalRecordService = disposalRecordService;
     }
 
-    // POST /api/disposals/{assetId}
     @PostMapping("/{assetId}")
-    public DisposalRecord createDisposal(
-            @PathVariable Long assetId,
-            @RequestBody DisposalRecord record) {
-        return disposalRecordService.create(assetId, record);
+    public DisposalRecord create(@PathVariable Long assetId,
+                                 @RequestBody DisposalRecord disposal) {
+        return disposalRecordService.createDisposal(assetId, disposal);
     }
 
-    // GET /api/disposals
     @GetMapping
-    public List<DisposalRecord> getAllDisposals() {
-        return disposalRecordService.getAll();
+    public List<DisposalRecord> getAll() {
+        return disposalRecordService.getAllDisposals();
     }
 
-    // GET /api/disposals/{id}
     @GetMapping("/{id}")
-    public DisposalRecord getDisposal(@PathVariable Long id) {
-        return disposalRecordService.getById(id);
+    public DisposalRecord getById(@PathVariable Long id) {
+        return disposalRecordService.getDisposal(id);
     }
 }

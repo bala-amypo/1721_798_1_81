@@ -16,23 +16,19 @@ public class TransferRecordController {
         this.transferRecordService = transferRecordService;
     }
 
-    // POST /api/transfers/{assetId}
     @PostMapping("/{assetId}")
-    public TransferRecord createTransfer(
-            @PathVariable Long assetId,
-            @RequestBody TransferRecord record) {
-        return transferRecordService.create(assetId, record);
+    public TransferRecord create(@PathVariable Long assetId,
+                                 @RequestBody TransferRecord record) {
+        return transferRecordService.createTransfer(assetId, record);
     }
 
-    // GET /api/transfers/asset/{assetId}
     @GetMapping("/asset/{assetId}")
-    public List<TransferRecord> getTransferHistory(@PathVariable Long assetId) {
-        return transferRecordService.getByAsset(assetId);
+    public List<TransferRecord> getByAsset(@PathVariable Long assetId) {
+        return transferRecordService.getTransfersForAsset(assetId);
     }
 
-    // GET /api/transfers/{id}
     @GetMapping("/{id}")
-    public TransferRecord getTransfer(@PathVariable Long id) {
-        return transferRecordService.getById(id);
+    public TransferRecord getById(@PathVariable Long id) {
+        return transferRecordService.getTransfer(id);
     }
 }
