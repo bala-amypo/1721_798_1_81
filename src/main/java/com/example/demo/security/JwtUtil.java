@@ -50,17 +50,24 @@ public class JwtUtil {
         return generateToken(claims, user.getEmail());
     }
     
-    // Return Jwt object for tests
-    public Jwt<?, ?> parseToken(String token) {
-        return Jwts.parser()
+    // For tests - returns Map to match test expectations
+    public Map<String, Object> parseToken(String token) {
+        Jwt<?, ?> jwt = Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token);
+        
+        // Cast to Map<String, Object> for tests
+        return (Map<String, Object>) jwt.getPayload();
     }
     
-    // Helper method to get Claims for your own code
+    // Helper method for your own code
     public Claims getClaims(String token) {
-        return (Claims) parseToken(token).getPayload();
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
     
     public String extractUsername(String token) {
