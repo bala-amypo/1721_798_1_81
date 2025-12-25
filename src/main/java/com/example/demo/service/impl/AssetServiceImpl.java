@@ -23,15 +23,9 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Asset createAsset(Asset asset) {
 
-        /* 🔥 HARD SAFETY FIXES */
-
-        // Never accept ID from client
+        // NEVER trust client data
         asset.setId(null);
-
-        // Never accept createdAt from client
         asset.setCreatedAt(null);
-
-        // Never accept nested User from client
         asset.setCurrentHolder(null);
 
         if (asset.getAssetTag() == null || asset.getAssetTag().isBlank()) {
@@ -42,7 +36,6 @@ public class AssetServiceImpl implements AssetService {
             throw new ValidationException("Asset tag already exists");
         }
 
-        // Default status
         if (asset.getStatus() == null) {
             asset.setStatus("AVAILABLE");
         }
@@ -50,12 +43,15 @@ public class AssetServiceImpl implements AssetService {
         return assetRepository.save(asset);
     }
 
+    /* 🔥 CRITICAL FIX */
     @Override
+    @Transactional(readOnly = true)
     public List<Asset> getAllAssets() {
         return assetRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Asset getAsset(Long id) {
         return assetRepository.findById(id)
                 .orElseThrow(() ->
