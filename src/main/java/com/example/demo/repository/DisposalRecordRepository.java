@@ -1,6 +1,10 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.DisposalRecord;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DisposalRecordRepository extends JpaRepository<DisposalRecord, Long> {}
+import java.util.Optional;
+
+public interface DisposalRecordRepository {
+    DisposalRecord save(DisposalRecord record);
+    Optional<DisposalRecord> findById(Long id);
+}
