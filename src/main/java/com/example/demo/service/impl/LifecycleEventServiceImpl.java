@@ -32,6 +32,7 @@ public class LifecycleEventServiceImpl implements LifecycleEventService {
     public LifecycleEvent logEvent(Long assetId, Long userId, LifecycleEvent event) {
         Asset asset = assetRepository.findById(assetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
