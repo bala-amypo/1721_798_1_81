@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import com.example.demo.entity.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,25 +50,29 @@ public class JwtUtil {
         return generateToken(claims, user.getEmail());
     }
     
-    // This method should return Claims for the tests
-    public Claims parseToken(String token) {
+    // Return Jwt object for tests
+    public Jwt<?, ?> parseToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseSignedClaims(token);
+    }
+    
+    // Helper method to get Claims for your own code
+    public Claims getClaims(String token) {
+        return (Claims) parseToken(token).getPayload();
     }
     
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return getClaims(token).getSubject();
     }
     
     public String extractRole(String token) {
-        return parseToken(token).get("role", String.class);
+        return getClaims(token).get("role", String.class);
     }
     
     public Long extractUserId(String token) {
-        return parseToken(token).get("userId", Long.class);
+        return getClaims(token).get("userId", Long.class);
     }
     
     public Date extractExpiration(String token) {
@@ -75,7 +80,7 @@ public class JwtUtil {
     }
     
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = parseToken(token);
+        final Claims claims = getClaims(token);
         return claimsResolver.apply(claims);
     }
     
