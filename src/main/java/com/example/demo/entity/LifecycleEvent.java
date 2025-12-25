@@ -1,36 +1,67 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "lifecycle_events")
 public class LifecycleEvent {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Asset asset;
+
     private String eventType;
+
     private String eventDescription;
-    private LocalDateTime eventDate;
-    private User performedBy;
 
-    public LifecycleEvent() {}
+    private LocalDateTime eventTime = LocalDateTime.now();
 
-    public LifecycleEvent(Long id, Asset asset, String eventType,
-                          String eventDescription,
-                          LocalDateTime eventDate, User performedBy) {
+    @ManyToOne
+    @JoinColumn(name = "asset_id")
+    private Asset asset;
+
+    // ===== GETTERS =====
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public String getEventDescription() {
+        return eventDescription;
+    }
+
+    public LocalDateTime getEventTime() {
+        return eventTime;
+    }
+
+    public Asset getAsset() {
+        return asset;
+    }
+
+    // ===== SETTERS (REQUIRED BY TESTS) =====
+
+    public void setId(Long id) {
         this.id = id;
-        this.asset = asset;
+    }
+
+    public void setEventType(String eventType) {
         this.eventType = eventType;
+    }
+
+    public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
-        this.eventDate = eventDate;
-        this.performedBy = performedBy;
     }
 
-    public void prePersist() {
-        if (eventDate == null) eventDate = LocalDateTime.now();
+    public void setEventTime(LocalDateTime eventTime) {
+        this.eventTime = eventTime;
     }
 
-    public void setId(Long id) { this.id = id; }
-    public Long getId() { return id; }
-    public Asset getAsset() { return asset; }
-    public void setAsset(Asset asset) { this.asset = asset; }
-    public void setPerformedBy(User user) { this.performedBy = user; }
-    public User getPerformedBy() { return performedBy; }
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
 }
