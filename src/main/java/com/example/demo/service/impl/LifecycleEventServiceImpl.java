@@ -55,7 +55,7 @@ public class LifecycleEventServiceImpl implements LifecycleEventService {
     
     @Override
     public List<LifecycleEvent> getEventsForAsset(Long assetId) {
-        return lifecycleEventRepository.findByAssetId(assetId);
+        return lifecycleEventRepository.findByAsset_Id(assetId);
     }
     
     @Override
