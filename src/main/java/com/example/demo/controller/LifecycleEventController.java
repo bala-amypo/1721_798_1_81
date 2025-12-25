@@ -2,9 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.LifecycleEvent;
 import com.example.demo.service.LifecycleEventService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/events")
+@Tag(name = "Lifecycle Events")
 public class LifecycleEventController {
 
     private final LifecycleEventService service;
@@ -13,11 +18,21 @@ public class LifecycleEventController {
         this.service = service;
     }
 
-    public LifecycleEvent log(Long assetId, Long userId, LifecycleEvent e) {
-        return service.logEvent(assetId, userId, e);
+    @PostMapping("/{assetId}/{userId}")
+    public LifecycleEvent logEvent(
+            @PathVariable Long assetId,
+            @PathVariable Long userId,
+            @RequestBody LifecycleEvent event) {
+        return service.logEvent(assetId, userId, event);
     }
 
-    public List<LifecycleEvent> getForAsset(Long assetId) {
+    @GetMapping("/asset/{assetId}")
+    public List<LifecycleEvent> getEvents(@PathVariable Long assetId) {
         return service.getEventsForAsset(assetId);
+    }
+
+    @GetMapping("/{id}")
+    public LifecycleEvent getEvent(@PathVariable Long id) {
+        return service.getEvent(id);
     }
 }
