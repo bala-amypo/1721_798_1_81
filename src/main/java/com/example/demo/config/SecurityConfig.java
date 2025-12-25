@@ -4,6 +4,7 @@ import com.example.demo.security.CustomUserDetailsService;
 import com.example.demo.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -27,11 +28,11 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    /* ✅ REQUIRED FOR SPRING BOOT 3 */
+    /* REQUIRED IN SPRING BOOT 3 */
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+            AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
     @Bean
@@ -46,22 +47,36 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+            /* Disable CSRF for REST APIs */
             .csrf(csrf -> csrf.disable())
+
+            /* Stateless JWT-based security */
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            /* Authorization rules */
             .authorizeHttpRequests(auth -> auth
-                /* ✅ PUBLIC ENDPOINTS */
+
+                /* ALLOW CORS / SWAGGER PREFLIGHT */
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                /* PUBLIC ENDPOINTS */
                 .requestMatchers(
                     "/auth/**",
                     "/api/users/register",
                     "/swagger-ui/**",
+                    "/swagger-ui.html",
                     "/v3/api-docs/**"
                 ).permitAll()
 
-                /* 🔐 EVERYTHING ELSE NEEDS JWT */
+                /* ALL OTHER ENDPOINTS REQUIRE JWT */
                 .anyRequest().authenticated()
             )
+
+            /* Authentication provider */
             .authenticationProvider(authenticationProvider())
+
+            /* JWT filter */
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
