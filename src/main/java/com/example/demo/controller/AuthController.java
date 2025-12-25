@@ -5,7 +5,13 @@ import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+@RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     private final UserService userService;
@@ -16,24 +22,24 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-    public String register(RegisterRequest request) {
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
         User user = new User(
                 null,
-                request.getName(),
+                request.getFullName(),
                 request.getEmail(),
                 request.getDepartment(),
-                "USER",
+                null,
                 request.getPassword(),
                 null
         );
-        userService.registerUser(user);
-        return "REGISTERED";
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
-    public String login(LoginRequest request) {
-        return jwtUtil.generateToken(
-                java.util.Map.of(),
-                request.getEmail()
-        );
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        User user = userService.getByEmail(request.getEmail());
+        String token = jwtUtil.generateTokenForUser(user);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 }

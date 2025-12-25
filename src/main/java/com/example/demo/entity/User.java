@@ -17,8 +17,11 @@ public class User {
     private String email;
 
     private String department;
+
     private String role;
+
     private String password;
+
     private LocalDateTime createdAt;
 
     public User() {}
@@ -40,11 +43,13 @@ public class User {
         if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
-    // getters & setters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getFullName() { return fullName; }
     public String getEmail() { return email; }
-    public String getRole() { return role; }
     public String getDepartment() { return department; }
+    public String getRole() { return role; }
+    public String getPassword() { return password; }
+
+    public void setId(Long id) { this.id = id; }
     public void setPassword(String password) { this.password = password; }
 }
