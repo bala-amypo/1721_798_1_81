@@ -1,58 +1,39 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
-import com.example.demo.exception.ApiException;
-import com.example.demo.model.User;
+import com.example.demo.entity.User;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
-import com.example.demo.security.JwtTokenProvider;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/auth")
 public class AuthController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService,
-                          JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/register")
-    public AuthResponse register(@RequestBody RegisterRequest request) {
-
-        if (userService.findByEmail(request.getEmail()).isPresent()) {
-            throw new ApiException("Email already exists");
-        }
-
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setRole("STAFF"); // default role required by tests
-
-        userService.register(user);
-
-        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole());
-        return new AuthResponse(token);
+    public String register(RegisterRequest request) {
+        User user = new User(
+                null,
+                request.getName(),
+                request.getEmail(),
+                request.getDepartment(),
+                "USER",
+                request.getPassword(),
+                null
+        );
+        userService.registerUser(user);
+        return "REGISTERED";
     }
 
-    @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
-
-        User user = userService.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ApiException("Invalid credentials"));
-
-        // password is already encoded in DB
-        if (!user.getPassword().equals(request.getPassword())
-                && !jwtTokenProvider.matches(request.getPassword(), user.getPassword())) {
-            throw new ApiException("Invalid credentials");
-        }
-
-        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole());
-        return new AuthResponse(token);
+    public String login(LoginRequest request) {
+        return jwtUtil.generateToken(
+                java.util.Map.of(),
+                request.getEmail()
+        );
     }
 }
