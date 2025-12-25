@@ -2,7 +2,7 @@ package com.example.demo.security;
 
 import com.example.demo.entity.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,24 +50,17 @@ public class JwtUtil {
         return generateToken(claims, user.getEmail());
     }
     
-    // For tests - returns Map to match test expectations
-    public Map<String, Object> parseToken(String token) {
-        Jwt<?, ?> jwt = Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token);
-        
-        // Cast to Map<String, Object> for tests
-        return (Map<String, Object>) jwt.getPayload();
-    }
-    
-    // Helper method for your own code
-    public Claims getClaims(String token) {
+    // This returns Jws<Claims> which has getPayload() method for tests
+    public Jws<Claims> parseToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseSignedClaims(token);
+    }
+    
+    // Helper method to get Claims for your own code
+    public Claims getClaims(String token) {
+        return parseToken(token).getPayload();
     }
     
     public String extractUsername(String token) {
