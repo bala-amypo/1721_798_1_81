@@ -1,29 +1,47 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Asset;
-import com.example.demo.repository.AssetRepository;
-import com.example.demo.service.LifecycleEventService;
+import com.example.demo.entity.*;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.ValidationException;
+import com.example.demo.repository.*;
+import com.example.demo.service.TransferRecordService;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
-public class TransferServiceImpl {
+public class TransferRecordServiceImpl implements TransferRecordService {
 
-    private final AssetRepository repo;
-    private final LifecycleEventService eventService;
+    private final TransferRecordRepository transferRecordRepository;
+    private final AssetRepository assetRepository;
+    private final UserRepository userRepository;
 
-    public TransferServiceImpl(AssetRepository repo, LifecycleEventService eventService) {
-        this.repo = repo;
-        this.eventService = eventService;
+    public TransferRecordServiceImpl(
+            TransferRecordRepository transferRecordRepository,
+            AssetRepository assetRepository,
+            UserRepository userRepository) {
+        this.transferRecordRepository = transferRecordRepository;
+        this.assetRepository = assetRepository;
+        this.userRepository = userRepository;
     }
 
-    public Asset transfer(Long assetId, String newOwner) {
-        Asset asset = repo.findById(assetId)
-                .orElseThrow(() -> new RuntimeException("Asset not found"));
+    public TransferRecord createTransfer(Long assetId, TransferRecord record) {
+        if (record.getTransferDate().isAfter(LocalDate.now()))
+            throw new ValidationException("Transfer date cannot be in the future");
 
-        asset.setOwner(newOwner);
-        repo.save(asset);
+        Asset asset = assetRepository.findById(assetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
 
-        eventService.recordEvent(asset, "TRANSFERRED", "Transferred to " + newOwner);
-        return asset;
+        record.setAsset(asset);
+        return transferRecordRepository.save(record);
+    }
+
+    public List<TransferRecord> getTransfersForAsset(Long assetId) {
+        return transferRecordRepository.findByAsset_Id(assetId);
+    }
+
+    public TransferRecord getTransfer(Long id) {
+        return transferRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transfer not found"));
     }
 }

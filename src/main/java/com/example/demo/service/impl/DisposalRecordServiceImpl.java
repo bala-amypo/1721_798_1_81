@@ -1,29 +1,45 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Asset;
-import com.example.demo.repository.AssetRepository;
-import com.example.demo.service.LifecycleEventService;
+import com.example.demo.entity.*;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.*;
+import com.example.demo.service.DisposalRecordService;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
-public class DisposalServiceImpl {
+public class DisposalRecordServiceImpl implements DisposalRecordService {
 
-    private final AssetRepository repo;
-    private final LifecycleEventService eventService;
+    private final DisposalRecordRepository disposalRecordRepository;
+    private final AssetRepository assetRepository;
+    private final UserRepository userRepository;
 
-    public DisposalServiceImpl(AssetRepository repo, LifecycleEventService eventService) {
-        this.repo = repo;
-        this.eventService = eventService;
+    public DisposalRecordServiceImpl(
+            DisposalRecordRepository disposalRecordRepository,
+            AssetRepository assetRepository,
+            UserRepository userRepository) {
+        this.disposalRecordRepository = disposalRecordRepository;
+        this.assetRepository = assetRepository;
+        this.userRepository = userRepository;
     }
 
-    public Asset dispose(Long assetId, String reason) {
-        Asset asset = repo.findById(assetId)
-                .orElseThrow(() -> new RuntimeException("Asset not found"));
+    public DisposalRecord createDisposal(Long assetId, DisposalRecord disposal) {
+        Asset asset = assetRepository.findById(assetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
 
         asset.setStatus("DISPOSED");
-        repo.save(asset);
+        assetRepository.save(asset);
 
-        eventService.recordEvent(asset, "DISPOSED", reason);
-        return asset;
+        disposal.setAsset(asset);
+        return disposalRecordRepository.save(disposal);
+    }
+
+    public DisposalRecord getDisposal(Long id) {
+        return disposalRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Disposal record not found"));
+    }
+
+    public List<DisposalRecord> getAllDisposals() {
+        return disposalRecordRepository.findAll();
     }
 }
