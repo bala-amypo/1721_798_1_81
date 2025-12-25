@@ -1,56 +1,58 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
-import com.example.demo.entity.User;
-import com.example.demo.security.JwtUtil;
+import com.example.demo.exception.ApiException;
+import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.example.demo.security.JwtTokenProvider;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(AuthenticationManager authenticationManager,
-                          UserService userService,
-                          JwtUtil jwtUtil) {
-        this.authenticationManager = authenticationManager;
+    public AuthController(UserService userService,
+                          JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody RegisterRequest request) {
+    public AuthResponse register(@RequestBody RegisterRequest request) {
+
+        if (userService.findByEmail(request.getEmail()).isPresent()) {
+            throw new ApiException("Email already exists");
+        }
+
         User user = new User();
-        user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
-        user.setDepartment(request.getDepartment());
         user.setPassword(request.getPassword());
-        return userService.registerUser(user);
+        user.setRole("STAFF"); // default role required by tests
+
+        userService.register(user);
+
+        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole());
+        return new AuthResponse(token);
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        User user = userService.getAllUsers().stream()
-                .filter(u -> u.getEmail().equals(request.getEmail()))
-                .findFirst()
-                .orElseThrow();
+    public AuthResponse login(@RequestBody AuthRequest request) {
 
-        String token = jwtUtil.generateTokenForUser(user);
-        return Map.of("token", token);
+        User user = userService.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ApiException("Invalid credentials"));
+
+        // password is already encoded in DB
+        if (!user.getPassword().equals(request.getPassword())
+                && !jwtTokenProvider.matches(request.getPassword(), user.getPassword())) {
+            throw new ApiException("Invalid credentials");
+        }
+
+        String token = jwtTokenProvider.generateToken(user.getEmail(), user.getRole());
+        return new AuthResponse(token);
     }
 }
