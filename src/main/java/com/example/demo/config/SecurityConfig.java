@@ -1,7 +1,7 @@
 package com.example.demo.config;
 
-import com.example.demo.security.JwtAuthenticationFilter;
 import com.example.demo.security.CustomUserDetailsService;
+import com.example.demo.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +27,7 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    /* 🔑 REQUIRED FIX */
+    /* ✅ REQUIRED FOR SPRING BOOT 3 */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
@@ -43,15 +43,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(sm ->
-                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
-                .permitAll()
+                /* ✅ PUBLIC ENDPOINTS */
+                .requestMatchers(
+                    "/auth/**",
+                    "/api/users/register",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**"
+                ).permitAll()
+
+                /* 🔐 EVERYTHING ELSE NEEDS JWT */
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())
@@ -65,4 +72,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
