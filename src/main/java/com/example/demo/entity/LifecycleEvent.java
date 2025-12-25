@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "lifecycle_events")
 public class LifecycleEvent {
 
     @Id
@@ -12,16 +11,15 @@ public class LifecycleEvent {
     private Long id;
 
     private String eventType;
-
     private String eventDescription;
-
-    private LocalDateTime eventTime = LocalDateTime.now();
+    private LocalDateTime eventTime;
 
     @ManyToOne
-    @JoinColumn(name = "asset_id")
     private Asset asset;
 
-    // ===== GETTERS =====
+    public LifecycleEvent() {
+        this.eventTime = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -31,8 +29,16 @@ public class LifecycleEvent {
         return eventType;
     }
 
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
     public String getEventDescription() {
         return eventDescription;
+    }
+
+    public void setEventDescription(String eventDescription) {
+        this.eventDescription = eventDescription;
     }
 
     public LocalDateTime getEventTime() {
@@ -41,24 +47,6 @@ public class LifecycleEvent {
 
     public Asset getAsset() {
         return asset;
-    }
-
-    // ===== SETTERS (REQUIRED BY TESTS) =====
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
-
-    public void setEventDescription(String eventDescription) {
-        this.eventDescription = eventDescription;
-    }
-
-    public void setEventTime(LocalDateTime eventTime) {
-        this.eventTime = eventTime;
     }
 
     public void setAsset(Asset asset) {
