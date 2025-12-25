@@ -1,38 +1,33 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.*;
+import com.example.demo.entity.Asset;
+import com.example.demo.entity.LifecycleEvent;
+import com.example.demo.repository.LifecycleEventRepository;
+import com.example.demo.service.LifecycleEventService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class LifecycleEventServiceImpl {
+@Service
+public class LifecycleEventServiceImpl implements LifecycleEventService {
 
     private final LifecycleEventRepository repo;
-    private final AssetRepository assetRepo;
-    private final UserRepository userRepo;
 
-    public LifecycleEventServiceImpl(LifecycleEventRepository repo,
-                                     AssetRepository assetRepo,
-                                     UserRepository userRepo) {
+    public LifecycleEventServiceImpl(LifecycleEventRepository repo) {
         this.repo = repo;
-        this.assetRepo = assetRepo;
-        this.userRepo = userRepo;
     }
 
-    public LifecycleEvent logEvent(Long assetId, Long userId, LifecycleEvent e) {
-        Asset asset = assetRepo.findById(assetId)
-                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
+    @Override
+    public void recordEvent(Asset asset, String type, String description) {
+        LifecycleEvent e = new LifecycleEvent();
         e.setAsset(asset);
-        e.setPerformedBy(user);
-        e.prePersist();
-        return repo.save(e);
+        e.setEventType(type);
+        e.setEventDescription(description);
+        repo.save(e);
     }
 
-    public List<LifecycleEvent> getEventsForAsset(Long assetId) {
-        return repo.findByAsset_Id(assetId);
+    @Override
+    public List<LifecycleEvent> getEventsByAsset(Long assetId) {
+        return repo.findByAssetId(assetId);
     }
 }

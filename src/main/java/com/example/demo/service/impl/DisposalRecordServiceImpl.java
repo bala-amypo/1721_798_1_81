@@ -1,33 +1,29 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.*;
+import com.example.demo.entity.Asset;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.service.LifecycleEventService;
+import org.springframework.stereotype.Service;
 
-public class DisposalRecordServiceImpl {
+@Service
+public class DisposalServiceImpl {
 
-    private final DisposalRecordRepository repo;
-    private final AssetRepository assetRepo;
-    private final UserRepository userRepo;
+    private final AssetRepository repo;
+    private final LifecycleEventService eventService;
 
-    public DisposalRecordServiceImpl(DisposalRecordRepository repo,
-                                     AssetRepository assetRepo,
-                                     UserRepository userRepo) {
+    public DisposalServiceImpl(AssetRepository repo, LifecycleEventService eventService) {
         this.repo = repo;
-        this.assetRepo = assetRepo;
-        this.userRepo = userRepo;
+        this.eventService = eventService;
     }
 
-    public DisposalRecord createDisposal(Long assetId, DisposalRecord dr) {
-        Asset asset = assetRepo.findById(assetId).orElseThrow();
+    public Asset dispose(Long assetId, String reason) {
+        Asset asset = repo.findById(assetId)
+                .orElseThrow(() -> new RuntimeException("Asset not found"));
+
         asset.setStatus("DISPOSED");
-        dr.setAsset(asset);
-        dr.prePersist();
-        return repo.save(dr);
-    }
+        repo.save(asset);
 
-    public DisposalRecord getDisposal(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Disposal record not found"));
+        eventService.recordEvent(asset, "DISPOSED", reason);
+        return asset;
     }
 }

@@ -1,36 +1,29 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.exception.ValidationException;
-import com.example.demo.repository.*;
+import com.example.demo.entity.Asset;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.service.LifecycleEventService;
+import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
+@Service
+public class TransferServiceImpl {
 
-public class TransferRecordServiceImpl {
+    private final AssetRepository repo;
+    private final LifecycleEventService eventService;
 
-    private final TransferRecordRepository repo;
-    private final AssetRepository assetRepo;
-    private final UserRepository userRepo;
-
-    public TransferRecordServiceImpl(TransferRecordRepository repo,
-                                     AssetRepository assetRepo,
-                                     UserRepository userRepo) {
+    public TransferServiceImpl(AssetRepository repo, LifecycleEventService eventService) {
         this.repo = repo;
-        this.assetRepo = assetRepo;
-        this.userRepo = userRepo;
+        this.eventService = eventService;
     }
 
-    public TransferRecord createTransfer(Long assetId, TransferRecord tr) {
-        if (tr.getTransferDate().isAfter(LocalDate.now()))
-            throw new ValidationException("Transfer date cannot be in the future");
+    public Asset transfer(Long assetId, String newOwner) {
+        Asset asset = repo.findById(assetId)
+                .orElseThrow(() -> new RuntimeException("Asset not found"));
 
-        Asset asset = assetRepo.findById(assetId).orElseThrow();
-        tr.setAsset(asset);
-        return repo.save(tr);
-    }
+        asset.setOwner(newOwner);
+        repo.save(asset);
 
-    public List<TransferRecord> getTransfersForAsset(Long assetId) {
-        return repo.findByAsset_Id(assetId);
+        eventService.recordEvent(asset, "TRANSFERRED", "Transferred to " + newOwner);
+        return asset;
     }
 }
