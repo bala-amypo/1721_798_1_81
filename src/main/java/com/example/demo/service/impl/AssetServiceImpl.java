@@ -3,10 +3,12 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Asset;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AssetRepository;
-
+import com.example.demo.service.AssetService;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
-public class AssetServiceImpl {
+@Service
+public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository repo;
 
@@ -15,7 +17,6 @@ public class AssetServiceImpl {
     }
 
     public Asset createAsset(Asset asset) {
-        asset.prePersist();
         return repo.save(asset);
     }
 
@@ -29,8 +30,8 @@ public class AssetServiceImpl {
     }
 
     public Asset updateStatus(Long id, String status) {
-        Asset a = getAsset(id);
-        a.setStatus(status);
-        return repo.save(a);
+        Asset asset = getAsset(id);
+        asset.setStatus(status);
+        return repo.save(asset);
     }
 }

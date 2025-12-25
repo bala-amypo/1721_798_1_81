@@ -1,32 +1,26 @@
 package com.example.demo.security;
 
-import com.example.demo.entity.User;
 import io.jsonwebtoken.*;
-
+import org.springframework.stereotype.Component;
 import java.util.*;
 
+@Component
 public class JwtUtil {
 
-    private final String secret = "secretkeysecretkeysecretkey123";
+    private final String SECRET = "secretkey123456";
 
-    public String generateToken(Map<String, Object> claims, String subject) {
+    public String generateTokenForUser(com.example.demo.entity.User user) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setSubject(user.getEmail())
+                .claim("role", user.getRole())
+                .claim("userId", user.getId())
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
     }
 
-    public String generateTokenForUser(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("email", user.getEmail());
-        claims.put("role", user.getRole());
-        claims.put("userId", user.getId());
-        return generateToken(claims, user.getEmail());
-    }
-
     public Claims parseToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
     }
 
     public String extractUsername(String token) {
@@ -41,7 +35,7 @@ public class JwtUtil {
         return ((Number) parseToken(token).get("userId")).longValue();
     }
 
-    public boolean isTokenValid(String token, String username) {
-        return extractUsername(token).equals(username);
+    public boolean isTokenValid(String token, String email) {
+        return extractUsername(token).equals(email);
     }
 }

@@ -1,11 +1,21 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+
+    private String fullName;
+
+    @Column(unique = true)
     private String email;
+
     private String department;
     private String role;
     private String password;
@@ -13,10 +23,10 @@ public class User {
 
     public User() {}
 
-    public User(Long id, String name, String email, String department,
+    public User(Long id, String fullName, String email, String department,
                 String role, String password, LocalDateTime createdAt) {
         this.id = id;
-        this.name = name;
+        this.fullName = fullName;
         this.email = email;
         this.department = department;
         this.role = role;
@@ -24,15 +34,17 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    @PrePersist
     public void prePersist() {
         if (role == null) role = "USER";
         if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
+    // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmail() { return email; }
-    public String getDepartment() { return department; }
     public String getRole() { return role; }
-    public String getPassword() { return password; }
+    public String getDepartment() { return department; }
+    public void setPassword(String password) { this.password = password; }
 }
