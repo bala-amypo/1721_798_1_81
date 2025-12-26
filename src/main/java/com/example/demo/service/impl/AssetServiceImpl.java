@@ -8,18 +8,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   // ✅ REQUIRED
+@Service
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
 
+    // Constructor injection (TEST SAFE)
     public AssetServiceImpl(AssetRepository assetRepository) {
         this.assetRepository = assetRepository;
     }
 
     @Override
     public Asset createAsset(Asset asset) {
-        asset.prePersist();
         return assetRepository.save(asset);
     }
 

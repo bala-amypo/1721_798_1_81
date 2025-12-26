@@ -14,17 +14,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service   // ✅ REQUIRED
+@Service
 public class DisposalRecordServiceImpl implements DisposalRecordService {
 
     private final DisposalRecordRepository disposalRecordRepository;
     private final AssetRepository assetRepository;
     private final UserRepository userRepository;
 
+    // REQUIRED constructor order
     public DisposalRecordServiceImpl(
             DisposalRecordRepository disposalRecordRepository,
             AssetRepository assetRepository,
             UserRepository userRepository) {
+
         this.disposalRecordRepository = disposalRecordRepository;
         this.assetRepository = assetRepository;
         this.userRepository = userRepository;
@@ -32,14 +34,14 @@ public class DisposalRecordServiceImpl implements DisposalRecordService {
 
     @Override
     public DisposalRecord createDisposal(Long assetId,
-                                         DisposalRecord record) {
+                                         DisposalRecord disposal) {
 
         Asset asset = assetRepository.findById(assetId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Asset not found"));
 
-        User approver = userRepository
-                .findById(record.getApprovedBy().getId())
+        User approver = userRepository.findById(
+                disposal.getApprovedBy().getId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
@@ -47,20 +49,19 @@ public class DisposalRecordServiceImpl implements DisposalRecordService {
             throw new ValidationException("Approver must be ADMIN");
         }
 
-        if (record.getDisposalDate()
+        if (disposal.getDisposalDate()
                 .isAfter(LocalDate.now())) {
             throw new ValidationException(
-                    "Future disposal date");
+                    "Disposal date cannot be in the future");
         }
 
-        record.setAsset(asset);
-        record.setApprovedBy(approver);
-        record.prePersist();
+        disposal.setAsset(asset);
+        disposal.setApprovedBy(approver);
 
         asset.setStatus("DISPOSED");
         assetRepository.save(asset);
 
-        return disposalRecordRepository.save(record);
+        return disposalRecordRepository.save(disposal);
     }
 
     @Override

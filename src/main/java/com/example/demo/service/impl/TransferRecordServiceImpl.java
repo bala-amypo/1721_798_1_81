@@ -14,32 +14,33 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service   // ✅ REQUIRED
+@Service
 public class TransferRecordServiceImpl implements TransferRecordService {
 
     private final TransferRecordRepository transferRecordRepository;
     private final AssetRepository assetRepository;
     private final UserRepository userRepository;
 
+    // REQUIRED constructor order
     public TransferRecordServiceImpl(
             TransferRecordRepository transferRecordRepository,
             AssetRepository assetRepository,
             UserRepository userRepository) {
+
         this.transferRecordRepository = transferRecordRepository;
         this.assetRepository = assetRepository;
         this.userRepository = userRepository;
     }
 
     @Override
-    public TransferRecord createTransfer(Long assetId,
-                                         TransferRecord record) {
+    public TransferRecord createTransfer(Long assetId, TransferRecord record) {
 
         Asset asset = assetRepository.findById(assetId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Asset not found"));
 
-        User approver = userRepository
-                .findById(record.getApprovedBy().getId())
+        User approver = userRepository.findById(
+                record.getApprovedBy().getId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
@@ -52,14 +53,14 @@ public class TransferRecordServiceImpl implements TransferRecordService {
             throw new ValidationException("Departments must differ");
         }
 
-        if (record.getTransferDate()
-                .isAfter(LocalDate.now())) {
+        if (record.getTransferDate().isAfter(LocalDate.now())) {
             throw new ValidationException(
                     "Transfer date cannot be in the future");
         }
 
         record.setAsset(asset);
         record.setApprovedBy(approver);
+
         return transferRecordRepository.save(record);
     }
 
@@ -72,7 +73,6 @@ public class TransferRecordServiceImpl implements TransferRecordService {
     public TransferRecord getTransfer(Long id) {
         return transferRecordRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Transfer record not found"));
+                        new ResourceNotFoundException("Transfer record not found"));
     }
 }
