@@ -3,7 +3,6 @@ package com.example.demo.security;
 import com.example.demo.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -15,11 +14,16 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret:mySuperSecretKeyThatIsAtLeast32CharactersLong123}")
-    private String secret;
+    /* =========================
+       DEFAULTS (IMPORTANT)
+       ========================= */
 
-    @Value("${jwt.expiration:86400}")
-    private long expirationSeconds;
+    // MUST NOT be null even without Spring
+    private final String secret =
+            "mySuperSecretKeyThatIsAtLeast32CharactersLong123";
+
+    // 1 day
+    private final long expirationSeconds = 86400;
 
     /* =========================
        INTERNAL HELPERS
@@ -39,10 +43,10 @@ public class JwtUtil {
 
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .claims(claims)
-                .subject(subject)
-                .issuedAt(new Date())
-                .expiration(getExpirationDate())
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date())
+                .setExpiration(getExpirationDate())
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -57,7 +61,7 @@ public class JwtUtil {
     }
 
     /* =========================
-       TOKEN PARSING (🔥 TEST EXPECTS THIS)
+       TOKEN PARSING (TEST EXPECTS THIS)
        ========================= */
 
     public Jws<Claims> parseToken(String token) {
