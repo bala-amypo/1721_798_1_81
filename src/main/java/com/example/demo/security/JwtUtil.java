@@ -3,57 +3,61 @@ package com.example.demo.security;
 import com.example.demo.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-@Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    // Must be >= 32 chars for HS256
+    private static final String SECRET =
+            "mySuperSecretKeyThatIsAtLeast32CharactersLong123";
 
-    @Value("${jwt.expiration}")
-    private long expirationSeconds;
+    private static final long EXPIRATION_MS = 1000 * 60 * 60 * 24; // 1 day
 
-    private Key getKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+    private final SecretKey key;
+
+    public JwtUtil() {
+        this.key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    // REQUIRED BY TEST
-    public String generateToken(Map<String, Object> claims, String subject) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + expirationSeconds * 1000);
+    /* =========================================================
+       TOKEN GENERATION
+       ========================================================= */
 
+    public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
-                .issuedAt(now)
-                .expiration(expiry)
-                .signWith(getKey(), Jwts.SIG.HS256)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .signWith(key) // ✅ CORRECT FOR 0.12.x
                 .compact();
     }
 
-    // REQUIRED BY TEST
     public String generateTokenForUser(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());
-        claims.put("email", user.getEmail());
-        claims.put("role", user.getRole());
-
-        return generateToken(claims, user.getEmail());
+        return Jwts.builder()
+                .claim("userId", user.getId())
+                .claim("email", user.getEmail())
+                .claim("role", user.getRole())
+                .subject(user.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .signWith(key) // ✅ CORRECT
+                .compact();
     }
 
-    // REQUIRED BY TEST
+    /* =========================================================
+       TOKEN PARSING
+       ========================================================= */
+
     public Jws<Claims> parseToken(String token) {
         return Jwts.parser()
-                .verifyWith(getKey())
+                .verifyWith(key) // ✅ MUST be SecretKey
                 .build()
-                .parseSignedClaims(token);
+                .parseSignedClaims(token); // ✅ REQUIRED for getPayload()
     }
 
     public String extractUsername(String token) {
@@ -61,21 +65,20 @@ public class JwtUtil {
     }
 
     public String extractRole(String token) {
-        return parseToken(token).getPayload().get("role", String.class);
+        return (String) parseToken(token).getPayload().get("role");
     }
 
     public Long extractUserId(String token) {
-        return parseToken(token).getPayload().get("userId", Long.class);
+        Object id = parseToken(token).getPayload().get("userId");
+        return id == null ? null : Long.valueOf(id.toString());
     }
 
     public boolean isTokenValid(String token, String username) {
-        return extractUsername(token).equals(username) && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return parseToken(token)
-                .getPayload()
-                .getExpiration()
-                .before(new Date());
+        try {
+            String tokenUser = extractUsername(token);
+            return tokenUser.equals(username);
+        } catch (JwtException | IllegalArgumentException ex) {
+            return false;
+        }
     }
 }
