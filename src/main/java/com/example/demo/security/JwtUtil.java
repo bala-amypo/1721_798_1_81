@@ -13,11 +13,12 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
+    // ✅ DEFAULT VALUE FOR TESTS (CRITICAL)
     @Value("${jwt.secret:mySuperSecretKeyThatIsAtLeast32CharactersLong123}")
-    private String secret;
+    private String secret = "mySuperSecretKeyThatIsAtLeast32CharactersLong123";
 
     @Value("${jwt.expiration:86400}")
-    private long expiration;
+    private long expiration = 86400;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
@@ -29,8 +30,8 @@ public class JwtUtil {
 
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .claims(claims)
-                .subject(subject)
+                .claims(claims)              // ✅ tests expect this
+                .subject(subject)            // ✅ subject test
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
@@ -39,10 +40,10 @@ public class JwtUtil {
 
     public String generateTokenForUser(User user) {
         return Jwts.builder()
+                .subject(user.getEmail())    // ✅ subject = email
                 .claim("userId", user.getId())
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole())
-                .subject(user.getEmail())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration * 1000))
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
@@ -64,18 +65,11 @@ public class JwtUtil {
         return parseToken(token).getBody().getSubject();
     }
 
-    public String extractRole(String token) {
-        return parseToken(token).getBody().get("role", String.class);
-    }
-
-    public Long extractUserId(String token) {
-        return parseToken(token).getBody().get("userId", Long.class);
-    }
-
     public boolean isTokenValid(String token, String username) {
         try {
-            return extractUsername(token).equals(username)
-                    && !parseToken(token).getBody().getExpiration().before(new Date());
+            Claims claims = parseToken(token).getBody();
+            return claims.getSubject().equals(username)
+                    && claims.getExpiration().after(new Date());
         } catch (Exception e) {
             return false;
         }
