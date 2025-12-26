@@ -24,9 +24,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // =====================================================
-    // REQUIRED BY TEST: generateToken(Map, String)
-    // =====================================================
+    // REQUIRED BY TEST
     public String generateToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationSeconds * 1000);
@@ -40,9 +38,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // =====================================================
-    // REQUIRED BY TEST: generateTokenForUser(User)
-    // =====================================================
+    // REQUIRED BY TEST
     public String generateTokenForUser(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
@@ -52,9 +48,7 @@ public class JwtUtil {
         return generateToken(claims, user.getEmail());
     }
 
-    // =====================================================
-    // TOKEN PARSING (JJWT 0.12.x)
-    // =====================================================
+    // REQUIRED BY TEST
     public Jws<Claims> parseToken(String token) {
         return Jwts.parser()
                 .verifyWith(getKey())
