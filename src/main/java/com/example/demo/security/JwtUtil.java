@@ -15,7 +15,6 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    // Default needed for tests (no Spring context)
     @Value("${jwt.secret:mySuperSecretKeyThatIsAtLeast32CharactersLong123}")
     private String secret;
 
@@ -58,16 +57,14 @@ public class JwtUtil {
     }
 
     /* =========================
-       TOKEN PARSING (REQUIRED BY TESTS)
+       TOKEN PARSING (🔥 TEST EXPECTS THIS)
        ========================= */
 
-    // 🔥 THIS METHOD WAS MISSING
-    public Claims parseToken(String token) {
+    public Jws<Claims> parseToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseClaimsJws(token);
     }
 
     /* =========================
@@ -75,15 +72,15 @@ public class JwtUtil {
        ========================= */
 
     public String extractUsername(String token) {
-        return parseToken(token).getSubject();
+        return parseToken(token).getPayload().getSubject();
     }
 
     public String extractRole(String token) {
-        return parseToken(token).get("role", String.class);
+        return parseToken(token).getPayload().get("role", String.class);
     }
 
     public Long extractUserId(String token) {
-        Object id = parseToken(token).get("userId");
+        Object id = parseToken(token).getPayload().get("userId");
         if (id instanceof Integer) {
             return ((Integer) id).longValue();
         }
@@ -96,7 +93,7 @@ public class JwtUtil {
 
     public boolean isTokenValid(String token, String expectedUsername) {
         try {
-            Claims claims = parseToken(token);
+            Claims claims = parseToken(token).getPayload();
             return claims.getSubject().equals(expectedUsername)
                     && claims.getExpiration().after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
