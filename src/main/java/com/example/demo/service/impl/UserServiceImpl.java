@@ -6,15 +6,16 @@ import com.example.demo.exception.ValidationException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service   // ✅ REQUIRED
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // REQUIRED constructor order
     public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (user.getPassword() == null ||
-            user.getPassword().length() < 8) {
+                user.getPassword().length() < 8) {
             throw new ValidationException(
                     "Password must be at least 8 characters");
         }
@@ -40,7 +41,6 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.prePersist();
-
         return userRepository.save(user);
     }
 

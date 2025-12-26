@@ -9,16 +9,17 @@ import com.example.demo.repository.AssetRepository;
 import com.example.demo.repository.LifecycleEventRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.LifecycleEventService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service   // ✅ REQUIRED
 public class LifecycleEventServiceImpl implements LifecycleEventService {
 
     private final LifecycleEventRepository lifecycleEventRepository;
     private final AssetRepository assetRepository;
     private final UserRepository userRepository;
 
-    // REQUIRED constructor order
     public LifecycleEventServiceImpl(
             LifecycleEventRepository lifecycleEventRepository,
             AssetRepository assetRepository,
@@ -45,7 +46,7 @@ public class LifecycleEventServiceImpl implements LifecycleEventService {
         }
 
         if (event.getEventDescription() == null ||
-            event.getEventDescription().isEmpty()) {
+                event.getEventDescription().isEmpty()) {
             throw new ValidationException(
                     "Event description must not be empty");
         }
@@ -53,7 +54,6 @@ public class LifecycleEventServiceImpl implements LifecycleEventService {
         event.setAsset(asset);
         event.setPerformedBy(user);
         event.prePersist();
-
         return lifecycleEventRepository.save(event);
     }
 

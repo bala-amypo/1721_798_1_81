@@ -9,17 +9,18 @@ import com.example.demo.repository.AssetRepository;
 import com.example.demo.repository.TransferRecordRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.TransferRecordService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service   // ✅ REQUIRED
 public class TransferRecordServiceImpl implements TransferRecordService {
 
     private final TransferRecordRepository transferRecordRepository;
     private final AssetRepository assetRepository;
     private final UserRepository userRepository;
 
-    // REQUIRED constructor order
     public TransferRecordServiceImpl(
             TransferRecordRepository transferRecordRepository,
             AssetRepository assetRepository,
@@ -43,14 +44,12 @@ public class TransferRecordServiceImpl implements TransferRecordService {
                         new ResourceNotFoundException("User not found"));
 
         if (!"ADMIN".equals(approver.getRole())) {
-            throw new ValidationException(
-                    "Approver must be ADMIN");
+            throw new ValidationException("Approver must be ADMIN");
         }
 
         if (record.getFromDepartment()
                 .equals(record.getToDepartment())) {
-            throw new ValidationException(
-                    "Departments must differ");
+            throw new ValidationException("Departments must differ");
         }
 
         if (record.getTransferDate()
@@ -61,7 +60,6 @@ public class TransferRecordServiceImpl implements TransferRecordService {
 
         record.setAsset(asset);
         record.setApprovedBy(approver);
-
         return transferRecordRepository.save(record);
     }
 
