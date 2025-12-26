@@ -1,12 +1,13 @@
 package com.example.demo.security;
 
 import com.example.demo.entity.User;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Jws;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,11 +21,11 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expirationSeconds;
 
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
-    }
-
+    // ===============================
+    // Token creation
+    // ===============================
     public String generateToken(Map<String, Object> claims, String subject) {
+
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationSeconds * 1000);
 
@@ -33,11 +34,12 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
     public String generateTokenForUser(User user) {
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         claims.put("email", user.getEmail());
@@ -46,17 +48,20 @@ public class JwtUtil {
         return generateToken(claims, user.getEmail());
     }
 
+    // ===============================
+    // Token parsing
+    // ===============================
     public String extractUsername(String token) {
-        return parseToken(token).getPayload().getSubject();
+        return parseToken(token).getBody().getSubject();
     }
 
     public String extractRole(String token) {
-        return (String) parseToken(token).getPayload().get("role");
+        return (String) parseToken(token).getBody().get("role");
     }
 
     public Long extractUserId(String token) {
-        Object val = parseToken(token).getPayload().get("userId");
-        return val == null ? null : Long.valueOf(val.toString());
+        Object id = parseToken(token).getBody().get("userId");
+        return id == null ? null : Long.valueOf(id.toString());
     }
 
     public boolean isTokenValid(String token, String username) {
@@ -69,14 +74,13 @@ public class JwtUtil {
     }
 
     private boolean isTokenExpired(String token) {
-        Date exp = parseToken(token).getPayload().getExpiration();
-        return exp.before(new Date());
+        Date expiration = parseToken(token).getBody().getExpiration();
+        return expiration.before(new Date());
     }
 
     public Jws<Claims> parseToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
+        return Jwts.parser()
+                .setSigningKey(secret)
                 .parseClaimsJws(token);
     }
 }
