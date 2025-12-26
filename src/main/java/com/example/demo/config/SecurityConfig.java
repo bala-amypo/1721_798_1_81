@@ -32,19 +32,13 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    // =========================
-    // Security Filter Chain
-    // =========================
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            // ✅ ENABLE CORS
             .cors()
             .and()
-            // ❌ Disable CSRF (JWT based)
             .csrf().disable()
-            // ❌ No session
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
@@ -63,9 +57,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // =========================
-    // CORS CONFIGURATION
-    // =========================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
@@ -83,9 +74,6 @@ public class SecurityConfig {
         return source;
     }
 
-    // =========================
-    // Authentication Provider
-    // =========================
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
@@ -97,18 +85,12 @@ public class SecurityConfig {
         return provider;
     }
 
-    // =========================
-    // Authentication Manager
-    // =========================
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // =========================
-    // Password Encoder
-    // =========================
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
