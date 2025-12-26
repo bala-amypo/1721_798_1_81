@@ -22,12 +22,10 @@ public class SwaggerConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT");
 
-        // ✅ YOUR DEPLOYED URL
         Server productionServer = new Server()
                 .url("http://9250.pro604cr.amypo.ai/")
                 .description("Production Server");
 
-        // ✅ LOCAL (OPTIONAL, KEEP FOR DEV)
         Server localServer = new Server()
                 .url("http://localhost:9001")
                 .description("Local Server");
