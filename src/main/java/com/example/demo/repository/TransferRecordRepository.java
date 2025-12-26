@@ -1,10 +1,11 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.TransferRecord;
-import java.util.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface TransferRecordRepository {
-    TransferRecord save(TransferRecord record);
-    Optional<TransferRecord> findById(Long id);
+public interface TransferRecordRepository
+        extends JpaRepository<TransferRecord, Long> {
+
     List<TransferRecord> findByAsset_Id(Long assetId);
 }
