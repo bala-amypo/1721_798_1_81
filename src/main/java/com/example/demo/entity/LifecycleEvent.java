@@ -25,8 +25,27 @@ public class LifecycleEvent {
     }
 
     public void prePersist() {
-        if (eventDate == null) eventDate = LocalDateTime.now();
+        if (this.eventDate == null) {
+            this.eventDate = LocalDateTime.now();
+        }
     }
 
     // getters & setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Asset getAsset() { return asset; }
+    public void setAsset(Asset asset) { this.asset = asset; }
+
+    public String getEventType() { return eventType; }
+    public void setEventType(String eventType) { this.eventType = eventType; }
+
+    public String getEventDescription() { return eventDescription; }
+    public void setEventDescription(String eventDescription) { this.eventDescription = eventDescription; }
+
+    public LocalDateTime getEventDate() { return eventDate; }
+    public void setEventDate(LocalDateTime eventDate) { this.eventDate = eventDate; }
+
+    public User getPerformedBy() { return performedBy; }
+    public void setPerformedBy(User performedBy) { this.performedBy = performedBy; }
 }
