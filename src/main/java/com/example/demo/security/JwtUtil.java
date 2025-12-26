@@ -2,8 +2,12 @@ package com.example.demo.security;
 
 import com.example.demo.entity.User;
 import io.jsonwebtoken.*;
-import java.util.*;
+import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Component   // ✅ ADD THIS
 public class JwtUtil {
 
     private static final String SECRET = "secret";
