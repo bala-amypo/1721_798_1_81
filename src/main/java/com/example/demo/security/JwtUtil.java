@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -22,14 +23,14 @@ public class JwtUtil {
     private long expiration;
 
     /* =========================
-       KEY
+       SIGNING KEY
        ========================= */
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     /* =========================
-       TOKEN GENERATION (BASIC)
+       GENERIC TOKEN
        ========================= */
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
@@ -42,7 +43,7 @@ public class JwtUtil {
     }
 
     /* =========================
-       TOKEN GENERATION (USER)
+       USER TOKEN (TESTS)
        ========================= */
     public String generateTokenForUser(Long userId, String email, String role) {
         return Jwts.builder()
@@ -57,12 +58,22 @@ public class JwtUtil {
     }
 
     /* =========================
-       TOKEN PARSING
+       USER TOKEN (CONTROLLER)
+       ========================= */
+    public String generateTokenForUser(User user) {
+        return generateTokenForUser(
+                user.getId(),
+                user.getEmail(),
+                user.getRole()   // ✅ FIX: role is already String
+        );
+    }
+
+    /* =========================
+       PARSING (jjwt 0.11.x)
        ========================= */
     public Jws<Claims> parseToken(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(getSigningKey())
-                .build()
                 .parseClaimsJws(token);
     }
 
@@ -76,8 +87,12 @@ public class JwtUtil {
     }
 
     /* =========================
-       EXTRACTORS (REQUIRED BY TESTS)
+       EXTRACTORS
        ========================= */
+    public String extractUsername(String token) {
+        return extractEmail(token);
+    }
+
     public String extractEmail(String token) {
         return parseToken(token).getBody().getSubject();
     }
@@ -87,13 +102,13 @@ public class JwtUtil {
     }
 
     public Long extractUserId(String token) {
-        Object userId = parseToken(token).getBody().get("userId");
+        Object id = parseToken(token).getBody().get("userId");
 
-        if (userId instanceof Integer) {
-            return ((Integer) userId).longValue();
+        if (id instanceof Integer) {
+            return ((Integer) id).longValue();
         }
-        if (userId instanceof Long) {
-            return (Long) userId;
+        if (id instanceof Long) {
+            return (Long) id;
         }
         return null;
     }
