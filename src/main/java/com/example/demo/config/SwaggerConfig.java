@@ -22,8 +22,9 @@ public class SwaggerConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT");
 
+        // 🔥 IMPORTANT: HTTPS ONLY (NO http, NO trailing slash)
         Server productionServer = new Server()
-                .url("http://9250.pro604cr.amypo.ai")
+                .url("https://9250.pro604cr.amypo.ai")
                 .description("Production Server");
 
         Server localServer = new Server()
@@ -40,7 +41,8 @@ public class SwaggerConfig {
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", bearerScheme)
                 )
-                .addSecurityItem(new SecurityRequirement()
-                        .addList("bearerAuth"));
+                .addSecurityItem(
+                        new SecurityRequirement().addList("bearerAuth")
+                );
     }
 }
