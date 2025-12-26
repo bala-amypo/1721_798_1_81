@@ -2,46 +2,33 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.DisposalRecord;
 import com.example.demo.service.DisposalRecordService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/disposals")
-@SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Disposals", description = "Asset disposal management endpoints")
 public class DisposalRecordController {
-    
-    private final DisposalRecordService disposalRecordService;
-    
-    public DisposalRecordController(DisposalRecordService disposalRecordService) {
-        this.disposalRecordService = disposalRecordService;
+
+    private final DisposalRecordService service;
+
+    public DisposalRecordController(DisposalRecordService service) {
+        this.service = service;
     }
-    
+
     @PostMapping("/{assetId}")
-    @Operation(summary = "Create a disposal record")
-    public ResponseEntity<DisposalRecord> createDisposal(
-            @PathVariable Long assetId,
-            @RequestBody DisposalRecord disposal) {
-        DisposalRecord created = disposalRecordService.createDisposal(assetId, disposal);
-        return ResponseEntity.ok(created);
+    public DisposalRecord create(@PathVariable Long assetId,
+                                 @RequestBody DisposalRecord record) {
+        return service.createDisposal(assetId, record);
     }
-    
+
     @GetMapping
-    @Operation(summary = "Get all disposal records")
-    public ResponseEntity<List<DisposalRecord>> getAllDisposals() {
-        List<DisposalRecord> disposals = disposalRecordService.getAllDisposals();
-        return ResponseEntity.ok(disposals);
+    public List<DisposalRecord> getAll() {
+        return service.getAllDisposals();
     }
-    
+
     @GetMapping("/{id}")
-    @Operation(summary = "Get disposal record by ID")
-    public ResponseEntity<DisposalRecord> getDisposal(@PathVariable Long id) {
-        DisposalRecord disposal = disposalRecordService.getDisposal(id);
-        return ResponseEntity.ok(disposal);
+    public DisposalRecord get(@PathVariable Long id) {
+        return service.getDisposal(id);
     }
 }

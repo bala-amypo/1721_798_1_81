@@ -2,47 +2,34 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.LifecycleEvent;
 import com.example.demo.service.LifecycleEventService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
-@SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Lifecycle Events", description = "Asset lifecycle event endpoints")
 public class LifecycleEventController {
-    
-    private final LifecycleEventService lifecycleEventService;
-    
-    public LifecycleEventController(LifecycleEventService lifecycleEventService) {
-        this.lifecycleEventService = lifecycleEventService;
+
+    private final LifecycleEventService service;
+
+    public LifecycleEventController(LifecycleEventService service) {
+        this.service = service;
     }
-    
+
     @PostMapping("/{assetId}/{userId}")
-    @Operation(summary = "Log a lifecycle event")
-    public ResponseEntity<LifecycleEvent> logEvent(
-            @PathVariable Long assetId,
-            @PathVariable Long userId,
-            @RequestBody LifecycleEvent event) {
-        LifecycleEvent logged = lifecycleEventService.logEvent(assetId, userId, event);
-        return ResponseEntity.ok(logged);
+    public LifecycleEvent log(@PathVariable Long assetId,
+                              @PathVariable Long userId,
+                              @RequestBody LifecycleEvent event) {
+        return service.logEvent(assetId, userId, event);
     }
-    
+
     @GetMapping("/asset/{assetId}")
-    @Operation(summary = "Get all events for an asset")
-    public ResponseEntity<List<LifecycleEvent>> getEventsForAsset(@PathVariable Long assetId) {
-        List<LifecycleEvent> events = lifecycleEventService.getEventsForAsset(assetId);
-        return ResponseEntity.ok(events);
+    public List<LifecycleEvent> byAsset(@PathVariable Long assetId) {
+        return service.getEventsForAsset(assetId);
     }
-    
+
     @GetMapping("/{id}")
-    @Operation(summary = "Get event by ID")
-    public ResponseEntity<LifecycleEvent> getEvent(@PathVariable Long id) {
-        LifecycleEvent event = lifecycleEventService.getEvent(id);
-        return ResponseEntity.ok(event);
+    public LifecycleEvent get(@PathVariable Long id) {
+        return service.getEvent(id);
     }
 }

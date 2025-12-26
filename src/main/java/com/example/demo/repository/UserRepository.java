@@ -1,8 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.User;
-import java.util.Optional;
-import java.util.List;
+import java.util.*;
 
 public interface UserRepository {
     boolean existsByEmail(String email);
