@@ -2,21 +2,29 @@ package com.example.demo.security;
 
 import com.example.demo.entity.User;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Component   // ✅ ADD THIS
+@Component
 public class JwtUtil {
 
-    private static final String SECRET = "secret";
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration}")
+    private long expiration;
 
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
-                .signWith(SignatureAlgorithm.HS256, SECRET)
+                .setExpiration(
+                        new java.util.Date(
+                                System.currentTimeMillis() + expiration * 1000))
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
@@ -30,7 +38,7 @@ public class JwtUtil {
 
     public Claims parseToken(String token) {
         return Jwts.parser()
-                .setSigningKey(SECRET)
+                .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -52,3 +60,4 @@ public class JwtUtil {
         return extractUsername(token).equals(username);
     }
 }
+        
