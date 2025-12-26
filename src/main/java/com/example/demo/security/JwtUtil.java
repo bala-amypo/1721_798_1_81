@@ -28,7 +28,7 @@ public class JwtUtil {
     }
 
     // ===============================
-    // Token creation
+    // TOKEN GENERATION
     // ===============================
     public String generateTokenForUser(User user) {
 
@@ -50,18 +50,18 @@ public class JwtUtil {
     }
 
     // ===============================
-    // Token parsing
+    // TOKEN PARSING
     // ===============================
     public String extractUsername(String token) {
-        return parseToken(token).getPayload().getSubject();
+        return parseToken(token).getBody().getSubject();
     }
 
     public String extractRole(String token) {
-        return parseToken(token).getPayload().get("role", String.class);
+        return parseToken(token).getBody().get("role", String.class);
     }
 
     public Long extractUserId(String token) {
-        return parseToken(token).getPayload().get("userId", Long.class);
+        return parseToken(token).getBody().get("userId", Long.class);
     }
 
     public boolean isTokenValid(String token, String username) {
@@ -71,7 +71,7 @@ public class JwtUtil {
 
     private boolean isTokenExpired(String token) {
         return parseToken(token)
-                .getPayload()
+                .getBody()
                 .getExpiration()
                 .before(new Date());
     }
