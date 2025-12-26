@@ -1,4 +1,3 @@
-// File: src/main/java/com/example/demo/security/JwtUtil.java
 package com.example.demo.security;
 
 import com.example.demo.entity.User;
@@ -16,7 +15,7 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-    // Default so TestNG works (Spring context not loaded)
+    // Default value REQUIRED for TestNG (no Spring context)
     @Value("${jwt.secret:mySuperSecretKeyThatIsAtLeast32CharactersLong123}")
     private String secret;
 
@@ -31,7 +30,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    private Date expirationDate() {
+    private Date getExpirationDate() {
         return new Date(System.currentTimeMillis() + expirationSeconds * 1000);
     }
 
@@ -42,10 +41,10 @@ public class JwtUtil {
     // Used by t60
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date())
-                .setExpiration(expirationDate())
+                .claims(claims)
+                .subject(subject)
+                .issuedAt(new Date())
+                .expiration(getExpirationDate())
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -61,13 +60,15 @@ public class JwtUtil {
     }
 
     /* =========================
-       TOKEN PARSING (0.11.x)
+       TOKEN PARSING (0.12.x)
        ========================= */
 
-    public Jws<Claims> parseToken(String token) {
+    private Claims getAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
-                .parseClaimsJws(token);
+                .verifyWith(getSigningKey())
+                .build()                    // ✅ REQUIRED
+                .parseClaimsJws(token)     // ✅ NOW CORRECT
+                .getBody();
     }
 
     /* =========================
@@ -75,15 +76,15 @@ public class JwtUtil {
        ========================= */
 
     public String extractUsername(String token) {
-        return parseToken(token).getBody().getSubject();
+        return getAllClaims(token).getSubject();
     }
 
     public String extractRole(String token) {
-        return (String) parseToken(token).getBody().get("role");
+        return getAllClaims(token).get("role", String.class);
     }
 
     public Long extractUserId(String token) {
-        Object id = parseToken(token).getBody().get("userId");
+        Object id = getAllClaims(token).get("userId");
         if (id instanceof Integer) {
             return ((Integer) id).longValue();
         }
@@ -96,11 +97,10 @@ public class JwtUtil {
 
     public boolean isTokenValid(String token, String expectedUsername) {
         try {
-            String username = extractUsername(token);
-            Date expiration = parseToken(token).getBody().getExpiration();
-            return username.equals(expectedUsername)
-                    && expiration.after(new Date());
-        } catch (Exception e) {
+            Claims claims = getAllClaims(token);
+            return claims.getSubject().equals(expectedUsername)
+                    && claims.getExpiration().after(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
