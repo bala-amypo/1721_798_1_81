@@ -23,7 +23,7 @@ public class SwaggerConfig {
                 .bearerFormat("JWT");
 
         Server productionServer = new Server()
-                .url("https://9250.pro604cr.amypo.ai")
+                .url("https://9583.pro604cr.amypo.ai")
                 .description("Production Server");
 
         Server localServer = new Server()

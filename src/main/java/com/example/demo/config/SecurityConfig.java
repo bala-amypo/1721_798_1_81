@@ -62,7 +62,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "https://9250.pro604cr.amypo.ai",
+                "https://9583.pro604cr.amypo.ai",
                 "http://localhost:9001"
         ));
 
