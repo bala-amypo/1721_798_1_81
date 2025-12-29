@@ -24,7 +24,7 @@ public class SwaggerConfig {
 
         // 🔥 IMPORTANT: HTTPS ONLY (NO http, NO trailing slash)
         Server productionServer = new Server()
-                .url("https://9250.pro604cr.amypo.ai")
+                .url("https://9250.pro604cr.amypo.ai/")
                 .description("Production Server");
 
         Server localServer = new Server()
