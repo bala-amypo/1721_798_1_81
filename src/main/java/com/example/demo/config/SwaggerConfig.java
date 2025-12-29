@@ -22,13 +22,12 @@ public class SwaggerConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT");
 
-        // 🔥 IMPORTANT: HTTPS ONLY (NO http, NO trailing slash)
         Server productionServer = new Server()
-                .url("https://9250.pro604cr.amypo.ai/")
+                .url("https://9250.pro604cr.amypo.ai")
                 .description("Production Server");
 
         Server localServer = new Server()
-                .url("http://localhost:9001")
+                .url("http://localhost:9003")
                 .description("Local Server");
 
         return new OpenAPI()

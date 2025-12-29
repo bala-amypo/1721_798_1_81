@@ -61,10 +61,9 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        // 🔒 Explicit origins (NO wildcard in prod)
         config.setAllowedOrigins(List.of(
                 "https://9250.pro604cr.amypo.ai",
-                "http://localhost:9001"
+                "http://localhost:9003"
         ));
 
         config.setAllowedMethods(List.of(
