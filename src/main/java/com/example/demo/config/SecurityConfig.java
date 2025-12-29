@@ -63,7 +63,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "https://9250.pro604cr.amypo.ai",
-                "http://localhost:9003"
+                "http://localhost:9001"
         ));
 
         config.setAllowedMethods(List.of(

@@ -27,7 +27,7 @@ public class SwaggerConfig {
                 .description("Production Server");
 
         Server localServer = new Server()
-                .url("http://localhost:9003")
+                .url("http://localhost:9001")
                 .description("Local Server");
 
         return new OpenAPI()
